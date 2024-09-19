@@ -1,4 +1,4 @@
-package com.example.sos
+package com.example.sender
 
 import org.junit.Test
 

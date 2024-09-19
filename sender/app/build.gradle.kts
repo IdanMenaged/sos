@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.sos"
+    namespace = "com.example.sender"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.sos"
+        applicationId = "com.example.sender"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

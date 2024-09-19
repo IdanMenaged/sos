@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SOS"
+rootProject.name = "Sender"
 include(":app")
+ 
