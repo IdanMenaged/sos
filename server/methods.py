@@ -116,6 +116,7 @@ class Methods:
         :param msg: a message
         :return: msg
         """
+        print(f'echoing "{msg}"')
         return msg
 
     @staticmethod
