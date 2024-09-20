@@ -20,8 +20,9 @@ import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 
-private const val SERVER_IP = "placeholder" // needs to be changed depending on the server ip
-private const val SERVER_PORT = 1234 // needs to match the port server is running on
+private const val SERVER_IP = "10.0.2.2" // special built in port that directs to development
+// machine (i.e. computer hosting the emulator)
+private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val TIMEOUT = 10000
 
 class MainActivity : ComponentActivity() {
