@@ -23,6 +23,7 @@ import java.net.Socket
 private const val SERVER_IP = "10.0.2.2" // special built in port that directs to development
 // machine (i.e. computer hosting the emulator)
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
+private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000
 
 class MainActivity : ComponentActivity() {
@@ -54,12 +55,14 @@ fun SosButton() {
 }
 
 private fun sendMessageToServer(msg: String) {
+    val formattedMsg = formatMessage(msg)
+
     try {
         val socket = Socket()
         socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
 
         val outputStream: OutputStream = socket.getOutputStream()
-        outputStream.write(msg.toByteArray())
+        outputStream.write(formattedMsg)
         outputStream.flush()
 
         outputStream.close()
@@ -67,4 +70,13 @@ private fun sendMessageToServer(msg: String) {
     } catch (e: Exception) {
         Log.e("sosbtn", "error in sendMessageToServer", e)
     }
+}
+
+/**
+ * adds the length in front of the msg and converts it to bytes
+ */
+private fun formatMessage(msg: String): ByteArray {
+    val lengthString = msg.length.toString().padStart(MSG_LEN_PADDING, '0')
+    val result = lengthString.toByteArray(Charsets.UTF_8) + msg.toByteArray(Charsets.UTF_8)
+    return result
 }
