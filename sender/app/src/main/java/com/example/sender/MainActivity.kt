@@ -65,8 +65,8 @@ private fun sendMessageToServer(msg: String) {
         outputStream.write(formattedMsg)
         outputStream.flush()
 
-        outputStream.close()
-        socket.close()
+//        outputStream.close()
+//        socket.close()
     } catch (e: Exception) {
         Log.e("sosbtn", "error in sendMessageToServer", e)
     }
