@@ -77,9 +77,6 @@ private fun sendMessageToServer(msg: String, socket: Socket) {
         val outputStream: OutputStream = socket.getOutputStream()
         outputStream.write(formattedMsg)
         outputStream.flush()
-
-//        outputStream.close()
-//        socket.close()
     } catch (e: Exception) {
         Log.e("sosbtn", "error in sendMessageToServer", e)
     }
@@ -89,7 +86,6 @@ private fun receiveMessageFromServer(socket: Socket): String? {
     try {
 
         val inputStream: InputStream = socket.getInputStream()
-        val reader = BufferedReader(InputStreamReader(inputStream))
 
         // get msg len
         val msg_len_bytes = ByteArray(MSG_LEN_PADDING)
@@ -101,10 +97,6 @@ private fun receiveMessageFromServer(socket: Socket): String? {
         inputStream.read(message_bytes)
 
         val message = String(message_bytes)
-
-        // Close the input stream and socket
-//        reader.close()
-//        socket.close()
 
         Log.d("sosbtn", "message received: $message")
         return message
