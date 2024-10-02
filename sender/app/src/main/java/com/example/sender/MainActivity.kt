@@ -27,6 +27,9 @@ private const val SERVER_PORT = 4000 // needs to match the port server is runnin
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000
 
+/**
+ * UI of the app
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +47,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * defines the SOS button
+ */
 @Composable
 fun SosButton() {
     Button(onClick = {
@@ -55,6 +61,10 @@ fun SosButton() {
     }
 }
 
+/**
+ * sends a message to the server and receives a response
+ * msg: string - the message to send (i.e. 'echo hi')
+ */
 private fun sendNRecv(msg: String) {
     var socket: Socket? = null
     var outputStream: OutputStream? = null
@@ -89,6 +99,11 @@ private fun sendNRecv(msg: String) {
     }
 }
 
+/**
+ * sends a message to the server
+ * msg: string - message to send (i.e. 'echo hi')
+ * outputStream: OutputStream - the output stream of the socket
+ */
 private fun sendMessageToServer(msg: String, outputStream: OutputStream) {
     val formattedMsg = formatMessage(msg)
     try {
@@ -100,6 +115,12 @@ private fun sendMessageToServer(msg: String, outputStream: OutputStream) {
     }
 }
 
+
+/**
+ * receives a message from the server (i.e. if request was 'echo hi' the message would be 'hi')
+ * inputStream: InputStream - the socket's input stream
+ * returns: String - the received message
+ */
 private fun receiveMessageFromServer(inputStream: InputStream): String? {
     try {
         // Get the message length
@@ -123,6 +144,7 @@ private fun receiveMessageFromServer(inputStream: InputStream): String? {
 
 /**
  * adds the length in front of the msg and converts it to bytes
+ * i.e. hi -> 0002hi
  */
 private fun formatMessage(msg: String): ByteArray {
     val lengthString = msg.length.toString().padStart(MSG_LEN_PADDING, '0')
