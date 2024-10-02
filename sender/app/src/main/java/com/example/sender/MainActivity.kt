@@ -56,23 +56,43 @@ fun SosButton() {
 }
 
 private fun sendNRecv(msg: String) {
+    var socket: Socket? = null
+    var outputStream: OutputStream? = null
+    var inputStream: InputStream? = null
     try {
-        val socket = Socket()
-        socket.soTimeout = TIMEOUT // read timeout
+        // Create socket and set timeout
+        socket = Socket()
+        socket.soTimeout = TIMEOUT
         socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
 
-        sendMessageToServer(msg, socket)
-        val response = receiveMessageFromServer(socket)
+        // Send message to server
+        outputStream = socket.getOutputStream()
+        sendMessageToServer(msg, outputStream)
+
+        // Receive message from server
+        inputStream = socket.getInputStream()
+        val response = receiveMessageFromServer(inputStream)
+
+        Log.d("sosbtn", "response received: $response")
+
     } catch (e: Exception) {
         Log.e("sosbtn", "error in send_n_recv", e)
+    } finally {
+        // Close streams and socket after communication is done
+        try {
+            outputStream?.close()
+            inputStream?.close()
+            socket?.close()
+        } catch (e: Exception) {
+            Log.e("sosbtn", "error closing resources", e)
+        }
     }
 }
 
-private fun sendMessageToServer(msg: String, socket: Socket) {
+private fun sendMessageToServer(msg: String, outputStream: OutputStream) {
     val formattedMsg = formatMessage(msg)
-
     try {
-        val outputStream: OutputStream = socket.getOutputStream()
+        // Send the message
         outputStream.write(formattedMsg)
         outputStream.flush()
     } catch (e: Exception) {
@@ -80,30 +100,25 @@ private fun sendMessageToServer(msg: String, socket: Socket) {
     }
 }
 
-private fun receiveMessageFromServer(socket: Socket): String? {
+private fun receiveMessageFromServer(inputStream: InputStream): String? {
     try {
+        // Get the message length
+        val msg_len_bytes = ByteArray(MSG_LEN_PADDING)
+        inputStream.read(msg_len_bytes)
+        val msg_len = String(msg_len_bytes).trim().toInt()
 
-        val inputStream: InputStream = socket.getInputStream()
+        // Read the actual message
+        val message_bytes = ByteArray(msg_len)
+        inputStream.read(message_bytes)
 
-        // get msg len
-        val msgLenBytes = ByteArray(MSG_LEN_PADDING)
-        inputStream.read(msgLenBytes)
-
-        val msgLen = String(msgLenBytes).trim().toInt()
-
-        val messageBytes = ByteArray(msgLen)
-        inputStream.read(messageBytes)
-
-        val message = String(messageBytes)
-
-        Log.d("sosbtn", "message received: $message")
-        return message
+        return String(message_bytes)
     } catch (e: Exception) {
         Log.e("sosbtn", "error in receiveMessageFromServer", e)
     }
 
     return null
 }
+
 
 
 /**
