@@ -16,9 +16,7 @@ import com.example.sender.ui.theme.SenderTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.BufferedReader
 import java.io.InputStream
-import java.io.InputStreamReader
 import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -50,14 +48,14 @@ class MainActivity : ComponentActivity() {
 fun SosButton() {
     Button(onClick = {
         CoroutineScope(Dispatchers.IO).launch {
-            send_n_recv("echo hi")
+            sendNRecv("echo hi")
         }
     }) {
         Text("SOS")
     }
 }
 
-private fun send_n_recv(msg: String) {
+private fun sendNRecv(msg: String) {
     try {
         val socket = Socket()
         socket.soTimeout = TIMEOUT // read timeout
@@ -88,15 +86,15 @@ private fun receiveMessageFromServer(socket: Socket): String? {
         val inputStream: InputStream = socket.getInputStream()
 
         // get msg len
-        val msg_len_bytes = ByteArray(MSG_LEN_PADDING)
-        inputStream.read(msg_len_bytes)
+        val msgLenBytes = ByteArray(MSG_LEN_PADDING)
+        inputStream.read(msgLenBytes)
 
-        val msg_len = String(msg_len_bytes).trim().toInt()
+        val msgLen = String(msgLenBytes).trim().toInt()
 
-        val message_bytes = ByteArray(msg_len)
-        inputStream.read(message_bytes)
+        val messageBytes = ByteArray(msgLen)
+        inputStream.read(messageBytes)
 
-        val message = String(message_bytes)
+        val message = String(messageBytes)
 
         Log.d("sosbtn", "message received: $message")
         return message
