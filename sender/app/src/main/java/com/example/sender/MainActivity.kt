@@ -16,6 +16,9 @@ import com.example.sender.ui.theme.SenderTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -47,20 +50,30 @@ class MainActivity : ComponentActivity() {
 fun SosButton() {
     Button(onClick = {
         CoroutineScope(Dispatchers.IO).launch {
-            sendMessageToServer("echo hi")
+            send_n_recv("echo hi")
         }
     }) {
         Text("SOS")
     }
 }
 
-private fun sendMessageToServer(msg: String) {
+private fun send_n_recv(msg: String) {
+    try {
+        val socket = Socket()
+        socket.soTimeout = TIMEOUT // read timeout
+        socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
+
+        sendMessageToServer(msg, socket)
+        val response = receiveMessageFromServer(socket)
+    } catch (e: Exception) {
+        Log.e("sosbtn", "error in send_n_recv", e)
+    }
+}
+
+private fun sendMessageToServer(msg: String, socket: Socket) {
     val formattedMsg = formatMessage(msg)
 
     try {
-        val socket = Socket()
-        socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
-
         val outputStream: OutputStream = socket.getOutputStream()
         outputStream.write(formattedMsg)
         outputStream.flush()
@@ -71,6 +84,37 @@ private fun sendMessageToServer(msg: String) {
         Log.e("sosbtn", "error in sendMessageToServer", e)
     }
 }
+
+private fun receiveMessageFromServer(socket: Socket): String? {
+    try {
+
+        val inputStream: InputStream = socket.getInputStream()
+        val reader = BufferedReader(InputStreamReader(inputStream))
+
+        // get msg len
+        val msg_len_bytes = ByteArray(MSG_LEN_PADDING)
+        inputStream.read(msg_len_bytes)
+
+        val msg_len = String(msg_len_bytes).trim().toInt()
+
+        val message_bytes = ByteArray(msg_len)
+        inputStream.read(message_bytes)
+
+        val message = String(message_bytes)
+
+        // Close the input stream and socket
+//        reader.close()
+//        socket.close()
+
+        Log.d("sosbtn", "message received: $message")
+        return message
+    } catch (e: Exception) {
+        Log.e("sosbtn", "error in receiveMessageFromServer", e)
+    }
+
+    return null
+}
+
 
 /**
  * adds the length in front of the msg and converts it to bytes

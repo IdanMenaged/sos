@@ -26,6 +26,8 @@ class Protocol:
         content = content.encode()  # convert to bytes
         content = Protocol.add_prefix(content)
 
+        print(content)
+
         socket.send(content)
 
     @staticmethod
