@@ -1,6 +1,10 @@
 package com.example.receiver
 
+import android.app.Service
+import android.content.Intent
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +31,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        // start server communicator
+        val serviceIntent = Intent(this, ServerCommunicator::class.java)
+        startForegroundService(serviceIntent)
+
     }
 }
 
@@ -36,4 +45,26 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier
     )
+}
+
+class ServerCommunicator : Service() {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Thread {
+            while (true) {
+                Log.e("ServerCommunicator", "Service is running...")
+                try {
+                    Thread.sleep(2000)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
+        }.start()
+
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
+    }
 }
