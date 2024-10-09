@@ -51,7 +51,7 @@ class ServerCommunicator : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Thread {
             while (true) {
-                Log.e("ServerCommunicator", "Service is running...")
+                Log.d("ServerCommunicator", "Service is running...")
                 try {
                     Thread.sleep(2000)
                 } catch (e: InterruptedException) {
