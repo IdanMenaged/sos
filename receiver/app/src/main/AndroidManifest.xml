@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <uses-sdk
         android:minSdkVersion="26" />
@@ -29,7 +30,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ServerCommunicator" />
+        <service
+            android:name=".ServerCommunicator"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>
