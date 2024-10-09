@@ -1,9 +1,11 @@
 package com.example.receiver
 
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder
@@ -36,9 +38,21 @@ class MainActivity : ComponentActivity() {
         }
 
         // start server communicator
-        val serviceIntent = Intent(this, ServerCommunicator::class.java)
-        startForegroundService(serviceIntent)
+        if (!serverCommunicatorRunning()) {
+            val serviceIntent = Intent(this, ServerCommunicator::class.java)
+            startForegroundService(serviceIntent)
+        }
 
+    }
+
+    private fun serverCommunicatorRunning(): Boolean {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (ServerCommunicator::class.java.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 }
 
@@ -80,8 +94,6 @@ class ServerCommunicator : Service() {
         startForeground(1001, notification)
         return super.onStartCommand(intent, flags, startId)
     }
-
-
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
