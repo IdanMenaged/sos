@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.receiver.ui.theme.ReceiverTheme
 
+const val SERVICE_ID = 1001
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +93,7 @@ class ServerCommunicator : Service() {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .build()
 
-        startForeground(1001, notification)
+        startForeground(SERVICE_ID, notification)
         return super.onStartCommand(intent, flags, startId)
     }
 
