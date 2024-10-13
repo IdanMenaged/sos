@@ -67,11 +67,50 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 class ServerCommunicator : Service() {
+
+    companion object {
+        const val SERVICE_ID = 1
+        const val CHANNEL_ID = "Foreground Service ID"
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Create a notification channel
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            "Service Notifications",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+
+        // Initial notification when service starts
+        val initialNotification = Notification.Builder(this, CHANNEL_ID)
+            .setContentText("Service is running")
+            .setContentTitle("Service enabled")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .build()
+
+        // Start the service in the foreground
+        startForeground(SERVICE_ID, initialNotification)
+
+        // Start a new thread to periodically log and update the notification
         Thread {
             while (true) {
+                // Log that the service is running
                 Log.d("Service", "Service is running...")
+
+                // Update the notification
+                val updatedNotification = Notification.Builder(this, CHANNEL_ID)
+                    .setContentText("Service is running")
+                    .setContentTitle("Service enabled")
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .build()
+
+                // Notify the updated notification
+                notificationManager.notify(SERVICE_ID, updatedNotification)
+
                 try {
+                    // Sleep for 2 seconds
                     Thread.sleep(2000)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
@@ -79,21 +118,6 @@ class ServerCommunicator : Service() {
             }
         }.start()
 
-        val CHANNEL_ID = "Foreground Service ID"
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            CHANNEL_ID,
-            NotificationManager.IMPORTANCE_LOW
-        )
-
-        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-        val notification = Notification.Builder(this, CHANNEL_ID)
-            .setContentText("Service is running")
-            .setContentTitle("Service enabled")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .build()
-
-        startForeground(SERVICE_ID, notification)
         return super.onStartCommand(intent, flags, startId)
     }
 
