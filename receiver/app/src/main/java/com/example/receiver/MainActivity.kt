@@ -24,6 +24,7 @@ import androidx.core.app.NotificationCompat
 import com.example.receiver.ui.theme.ReceiverTheme
 
 const val SERVICE_ID = 1001
+const val NOTIFICATION_UPDATE_DELAY: Long = 2000 // wait 2 seconds before updating the notification
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,7 +120,7 @@ class ServerCommunicator : Service() {
 
                 try {
                     // Sleep for 2 seconds
-                    Thread.sleep(2000)
+                    Thread.sleep(NOTIFICATION_UPDATE_DELAY)
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
