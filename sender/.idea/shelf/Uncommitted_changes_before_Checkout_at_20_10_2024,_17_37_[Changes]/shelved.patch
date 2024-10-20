@@ -1,0 +1,192 @@
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"InspectionProjectProfileManager\">\n  <profile version=\"1.0\">\n    <option name=\"myName\" value=\"Project Default\" />\n    <inspection_tool class=\"ComposePreviewDimensionRespectsLimit\" enabled=\"true\" level=\"WARNING\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"ComposePreviewMustBeTopLevelFunction\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"ComposePreviewNeedsComposableAnnotation\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"ComposePreviewNotSupportedInUnitTestFiles\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"GlancePreviewDimensionRespectsLimit\" enabled=\"true\" level=\"WARNING\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"GlancePreviewMustBeTopLevelFunction\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"GlancePreviewNeedsComposableAnnotation\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"GlancePreviewNotSupportedInUnitTestFiles\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"PreviewAnnotationInFunctionWithParameters\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"PreviewApiLevelMustBeValid\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"PreviewFontScaleMustBeGreaterThanZero\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"PreviewMultipleParameterProviders\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n    <inspection_tool class=\"PreviewPickerAnnotation\" enabled=\"true\" level=\"ERROR\" enabled_by_default=\"true\">\n      <option name=\"composableFile\" value=\"true\" />\n      <option name=\"previewFile\" value=\"true\" />\n    </inspection_tool>\n  </profile>\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+--- a/.idea/inspectionProfiles/Project_Default.xml	(revision 800aa29df519e5514f39695f73a87e6d61354740)
++++ b/.idea/inspectionProfiles/Project_Default.xml	(date 1729434923976)
+@@ -37,6 +37,9 @@
+       <option name="composableFile" value="true" />
+       <option name="previewFile" value="true" />
+     </inspection_tool>
++    <inspection_tool class="PreviewDeviceShouldUseNewSpec" enabled="true" level="WEAK WARNING" enabled_by_default="true">
++      <option name="composableFile" value="true" />
++    </inspection_tool>
+     <inspection_tool class="PreviewFontScaleMustBeGreaterThanZero" enabled="true" level="ERROR" enabled_by_default="true">
+       <option name="composableFile" value="true" />
+       <option name="previewFile" value="true" />
+Index: ../receiver/app/src/main/java/com/example/receiver/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.receiver\n\nimport android.app.ActivityManager\nimport android.app.Notification\nimport android.app.NotificationChannel\nimport android.app.NotificationManager\nimport android.app.Service\nimport android.content.Context\nimport android.content.Intent\nimport android.os.Bundle\nimport android.os.IBinder\nimport android.util.Log\nimport androidx.activity.ComponentActivity\nimport androidx.activity.compose.setContent\nimport androidx.activity.enableEdgeToEdge\nimport androidx.compose.foundation.layout.fillMaxSize\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.material3.Scaffold\nimport androidx.compose.material3.Text\nimport androidx.compose.runtime.Composable\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.core.app.NotificationCompat\nimport com.example.receiver.ui.theme.ReceiverTheme\n\nconst val SERVICE_ID = 1001\nconst val NOTIFICATION_UPDATE_DELAY: Long = 2000 // wait 2 seconds before updating the notification\n\nclass MainActivity : ComponentActivity() {\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        enableEdgeToEdge()\n        setContent {\n            ReceiverTheme {\n                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->\n                    Greeting(\n                        name = \"Android\",\n                        modifier = Modifier.padding(innerPadding)\n                    )\n                }\n            }\n        }\n\n        // start server communicator\n        if (!serverCommunicatorRunning()) {\n            val serviceIntent = Intent(this, ServerCommunicator::class.java)\n            startForegroundService(serviceIntent)\n        }\n\n    }\n\n    private fun serverCommunicatorRunning(): Boolean {\n        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager\n        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {\n            if (ServerCommunicator::class.java.name == service.service.className) {\n                return true\n            }\n        }\n        return false\n    }\n}\n\n@Composable\nfun Greeting(name: String, modifier: Modifier = Modifier) {\n    Text(\n        text = \"Hello $name!\",\n        modifier = modifier\n    )\n}\n\nclass ServerCommunicator : Service() {\n\n    companion object {\n        const val SERVICE_ID = 1\n        const val CHANNEL_ID = \"Foreground Service ID\"\n    }\n\n    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {\n        // Create a notification channel\n        val channel = NotificationChannel(\n            CHANNEL_ID,\n            \"Service Notifications\",\n            NotificationManager.IMPORTANCE_LOW\n        )\n        val notificationManager = getSystemService(NotificationManager::class.java)\n        notificationManager.createNotificationChannel(channel)\n\n        // Initial notification when service starts\n        val initialNotification = Notification.Builder(this, CHANNEL_ID)\n            .setContentText(\"Service is running\")\n            .setContentTitle(\"Service enabled\")\n            .setSmallIcon(R.drawable.ic_launcher_background)\n            .build()\n\n        // Start the service in the foreground\n        startForeground(SERVICE_ID, initialNotification)\n\n        // Start a new thread to periodically log and update the notification\n        Thread {\n            var i = 0\n            while (true) {\n                // Log that the service is running\n                Log.d(\"Service\", \"Service is running...\")\n\n                var builder = NotificationCompat.Builder(this, CHANNEL_ID)\n                    .setSmallIcon(R.drawable.ic_launcher_background)\n                    .setContentTitle(\"service log\")\n                    .setContentText(i.toString())\n                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)\n\n                // Update the notification\n                val updatedNotification = Notification.Builder(this, CHANNEL_ID)\n                    .setContentText(\"Service is running\")\n                    .setContentTitle(\"Service enabled\")\n                    .setSmallIcon(R.drawable.ic_launcher_background)\n                    .build()\n\n                // Notify the updated notification\n                notificationManager.notify(SERVICE_ID, updatedNotification)\n\n                try {\n                    // Sleep for 2 seconds\n                    Thread.sleep(NOTIFICATION_UPDATE_DELAY)\n                } catch (e: InterruptedException) {\n                    e.printStackTrace()\n                }\n                i++\n            }\n        }.start()\n\n        return super.onStartCommand(intent, flags, startId)\n    }\n\n    override fun onBind(intent: Intent?): IBinder? {\n        return null\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../receiver/app/src/main/java/com/example/receiver/MainActivity.kt b/../receiver/app/src/main/java/com/example/receiver/MainActivity.kt
+--- a/../receiver/app/src/main/java/com/example/receiver/MainActivity.kt	(revision 800aa29df519e5514f39695f73a87e6d61354740)
++++ b/../receiver/app/src/main/java/com/example/receiver/MainActivity.kt	(date 1729434856790)
+@@ -1,10 +1,6 @@
+ package com.example.receiver
+ 
+-import android.app.ActivityManager
+-import android.app.Notification
+-import android.app.NotificationChannel
+-import android.app.NotificationManager
+-import android.app.Service
++import android.app.*
+ import android.content.Context
+ import android.content.Intent
+ import android.os.Bundle
+@@ -19,12 +15,17 @@
+ import androidx.compose.material3.Text
+ import androidx.compose.runtime.Composable
+ import androidx.compose.ui.Modifier
+-import androidx.compose.ui.tooling.preview.Preview
+ import androidx.core.app.NotificationCompat
+ import com.example.receiver.ui.theme.ReceiverTheme
++import java.io.BufferedReader
++import java.io.InputStreamReader
++import java.io.PrintWriter
++import java.net.Socket
+ 
+ const val SERVICE_ID = 1001
+ const val NOTIFICATION_UPDATE_DELAY: Long = 2000 // wait 2 seconds before updating the notification
++const val SERVER_IP = "your.server.ip" // Replace with your server IP
++const val SERVER_PORT = 12345 // Replace with your server port
+ 
+ class MainActivity : ComponentActivity() {
+     override fun onCreate(savedInstanceState: Bundle?) {
+@@ -41,17 +42,16 @@
+             }
+         }
+ 
+-        // start server communicator
++        // Start server communicator
+         if (!serverCommunicatorRunning()) {
+             val serviceIntent = Intent(this, ServerCommunicator::class.java)
+             startForegroundService(serviceIntent)
+         }
+-
+     }
+ 
+     private fun serverCommunicatorRunning(): Boolean {
+         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+-        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
++        for (service in activityManager.getRunningServices(Int.MAX_VALUE)) {
+             if (ServerCommunicator::class.java.name == service.service.className) {
+                 return true
+             }
+@@ -75,6 +75,10 @@
+         const val CHANNEL_ID = "Foreground Service ID"
+     }
+ 
++    private lateinit var socket: Socket
++    private lateinit var input: BufferedReader
++    private lateinit var output: PrintWriter
++
+     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+         // Create a notification channel
+         val channel = NotificationChannel(
+@@ -87,7 +91,7 @@
+ 
+         // Initial notification when service starts
+         val initialNotification = Notification.Builder(this, CHANNEL_ID)
+-            .setContentText("Service is running")
++            .setContentText("Connecting to server...")
+             .setContentTitle("Service enabled")
+             .setSmallIcon(R.drawable.ic_launcher_background)
+             .build()
+@@ -95,36 +99,49 @@
+         // Start the service in the foreground
+         startForeground(SERVICE_ID, initialNotification)
+ 
+-        // Start a new thread to periodically log and update the notification
++        // Start a new thread to manage the TCP connection and handle messages
+         Thread {
+-            var i = 0
+-            while (true) {
+-                // Log that the service is running
+-                Log.d("Service", "Service is running...")
++            try {
++                // Connect to the server
++                socket = Socket(SERVER_IP, SERVER_PORT)
++                input = BufferedReader(InputStreamReader(socket.getInputStream()))
++                output = PrintWriter(socket.getOutputStream(), true)
++
++                Log.d("Service", "Connected to server")
++
++                // Notify user of successful connection
++                val connectedNotification = NotificationCompat.Builder(this, CHANNEL_ID)
++                    .setSmallIcon(R.drawable.ic_launcher_background)
++                    .setContentTitle("Service enabled")
++                    .setContentText("Connected to server")
++                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
++                    .build()
++                notificationManager.notify(SERVICE_ID, connectedNotification)
++
++                // Keep waiting for messages
++                while (true) {
++                    val message = input.readLine()
++                    if (message != null) {
++                        Log.d("Service", "Message received: $message")
+ 
+-                var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+-                    .setSmallIcon(R.drawable.ic_launcher_background)
+-                    .setContentTitle("service log")
+-                    .setContentText(i.toString())
+-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+-
+-                // Update the notification
+-                val updatedNotification = Notification.Builder(this, CHANNEL_ID)
+-                    .setContentText("Service is running")
+-                    .setContentTitle("Service enabled")
+-                    .setSmallIcon(R.drawable.ic_launcher_background)
+-                    .build()
++                        // Notify the user with the received message
++                        val messageNotification = NotificationCompat.Builder(this, CHANNEL_ID)
++                            .setSmallIcon(R.drawable.ic_launcher_background)
++                            .setContentTitle("New Message")
++                            .setContentText(message)
++                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
++                            .build()
+ 
+-                // Notify the updated notification
+-                notificationManager.notify(SERVICE_ID, updatedNotification)
+-
+-                try {
+-                    // Sleep for 2 seconds
+-                    Thread.sleep(NOTIFICATION_UPDATE_DELAY)
+-                } catch (e: InterruptedException) {
+-                    e.printStackTrace()
+-                }
+-                i++
++                        notificationManager.notify(SERVICE_ID, messageNotification)
++                    } else {
++                        // Socket might have closed, try to reconnect
++                        socket.close()
++                        break
++                    }
++                }
++            } catch (e: Exception) {
++                e.printStackTrace()
++                Log.e("Service", "Error: ${e.message}")
+             }
+         }.start()
+ 
+@@ -134,4 +151,13 @@
+     override fun onBind(intent: Intent?): IBinder? {
+         return null
+     }
++
++    override fun onDestroy() {
++        super.onDestroy()
++        try {
++            socket.close()
++        } catch (e: Exception) {
++            Log.e("Service", "Error closing socket: ${e.message}")
++        }
++    }
+ }

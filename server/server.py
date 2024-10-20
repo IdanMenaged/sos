@@ -29,6 +29,8 @@ class Server:
         """
         constructor
         """
+        self.clients = {}  # (ip, port): socket
+
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.bind((ip, port))
@@ -43,7 +45,11 @@ class Server:
         """
         while True:
             client_socket, addr = self.sock.accept()
+            
+            self.clients[addr] = client_socket
+            
             methods.Methods.new_hist(addr)
+            
             clnt_thread = threading.Thread(target=self.handle_client, args=(client_socket, addr))
             clnt_thread.start()
 
@@ -75,6 +81,7 @@ class Server:
                 break
 
         client_socket.close()
+        self.clients.pop(addr)
         return False
 
     @staticmethod
