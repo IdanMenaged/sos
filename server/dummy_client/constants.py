@@ -14,5 +14,6 @@ PARAM_COUNTS = {
     'quit': 0,
     'exit': 0,
     'reload': 0,
-    'history': 0
+    'history': 0,
+    'send_to': 2,
 }

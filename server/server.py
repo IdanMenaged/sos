@@ -29,7 +29,7 @@ class Server:
         """
         constructor
         """
-        self.clients = {}  # (ip, port): socket
+        self.clients = {}  # ip: socket
 
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,7 +46,7 @@ class Server:
         while True:
             client_socket, addr = self.sock.accept()
             
-            self.clients[addr] = client_socket
+            self.clients[addr[0]] = client_socket
             
             methods.Methods.new_hist(addr)
             
@@ -84,8 +84,7 @@ class Server:
         self.clients.pop(addr)
         return False
 
-    @staticmethod
-    def handle_req(client_socket, req, addr):
+    def handle_req(self, client_socket, req, addr):
         """
         determines a response based on a request
         :param client_socket: client socket
@@ -99,6 +98,8 @@ class Server:
             res = Server.handle_reload(client_socket)
         elif cmd == 'history':
             res = methods.Methods.history(addr)
+        elif cmd == 'send_to':
+            res = self.send_to(*params)
         else:
             try:
                 res = getattr(methods.Methods, cmd)(*params)
@@ -126,6 +127,21 @@ class Server:
 
         importlib.reload(sys.modules['methods'])
         return 'module reloaded'
+    
+    def send_to(self, target_ip, msg):
+        """send a message to a certain connected client
+
+        Args:
+            target_ip (str): ip of the connected client
+            msg (str): message to send
+
+        Returns:
+            str: message to send back to the sending client
+        """
+        if target_ip not in self.clients.keys():
+            return f'client {target_ip} is not connected'
+        else:
+            return 'message sent'
 
 
 if __name__ == '__main__':
