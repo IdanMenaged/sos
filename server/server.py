@@ -141,6 +141,9 @@ class Server:
         if target_ip not in self.clients.keys():
             return f'client {target_ip} is not connected'
         else:
+            target_socket = self.clients[target_ip]
+            Protocol.send(target_socket, msg)
+
             return 'message sent'
 
 
