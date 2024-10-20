@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.NotificationCompat
 import com.example.receiver.ui.theme.ReceiverTheme
 
 const val SERVICE_ID = 1001
@@ -95,9 +96,16 @@ class ServerCommunicator : Service() {
 
         // Start a new thread to periodically log and update the notification
         Thread {
+            var i = 0
             while (true) {
                 // Log that the service is running
                 Log.d("Service", "Service is running...")
+
+                var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher_background)
+                    .setContentTitle("service log")
+                    .setContentText(i.toString())
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
                 // Update the notification
                 val updatedNotification = Notification.Builder(this, CHANNEL_ID)
@@ -115,6 +123,7 @@ class ServerCommunicator : Service() {
                 } catch (e: InterruptedException) {
                     e.printStackTrace()
                 }
+                i++
             }
         }.start()
 
