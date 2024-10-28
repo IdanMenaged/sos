@@ -81,7 +81,7 @@ class Server:
                 break
 
         client_socket.close()
-        self.clients.pop(addr)
+        self.clients.pop(addr[0])
         return False
 
     def handle_req(self, client_socket, req, addr):
