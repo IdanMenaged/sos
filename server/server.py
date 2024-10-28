@@ -1,4 +1,5 @@
 """
+Server
 Idan Menaged
 """
 import importlib
@@ -87,6 +88,7 @@ class Server:
     def handle_req(self, client_socket, req, addr):
         """
         determines a response based on a request
+        :param addr: client address, format: (ip, port)
         :param client_socket: client socket
         :param req: request
         :return: response
@@ -108,9 +110,6 @@ class Server:
                     res = b'illegal command'
                 else:
                     res = 'illegal command'
-
-            # for testing errors
-            # res = getattr(methods.Methods, cmd)(*params)
 
         return res
 

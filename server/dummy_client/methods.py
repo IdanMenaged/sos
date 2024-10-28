@@ -1,3 +1,8 @@
+"""
+Idan Menaged
+methods the server can execute. not an exhaustive list.
+"""
+
 import importlib
 import sys
 import threading

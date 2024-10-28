@@ -1,3 +1,8 @@
+/**
+ * Idan Menaged
+ * main screen for a sender client
+ */
+
 package com.example.sender
 
 import android.os.Bundle
@@ -78,10 +83,7 @@ class ServerCommunicator {
         var outputStream: OutputStream? = null
         var inputStream: InputStream? = null
         try {
-            // Create socket and set timeout
-            socket = Socket()
-            socket.soTimeout = TIMEOUT
-            socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
+            socket = initSocket()
 
             // Send message to server
             outputStream = socket.getOutputStream()
@@ -153,5 +155,16 @@ class ServerCommunicator {
     private fun formatMessage(msg: String): ByteArray {
         val lengthString = msg.length.toString().padStart(MSG_LEN_PADDING, '0')
         return lengthString.toByteArray(Charsets.UTF_8) + msg.toByteArray(Charsets.UTF_8)
+    }
+
+    /**
+     * initiate a socket with connection to the server
+     */
+    private fun initSocket(): Socket {
+        val socket = Socket()
+        socket.soTimeout = TIMEOUT
+        socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
+
+        return socket
     }
 }

@@ -1,5 +1,6 @@
 """
 Idan Menaged
+graphical ui for the client
 """
 
 import wx
