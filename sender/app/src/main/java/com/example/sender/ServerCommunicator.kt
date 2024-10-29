@@ -1,3 +1,7 @@
+/**
+ * Idan Menaged
+ */
+
 package com.example.sender
 
 import android.util.Log
