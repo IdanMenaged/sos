@@ -47,8 +47,6 @@ class Server:
         while True:
             client_socket, addr = self.sock.accept()
             
-            self.listeners[addr[0]] = client_socket  # todo: add only if is a listener
-            
             methods.Methods.new_hist(addr)
             
             clnt_thread = threading.Thread(target=self.handle_client, args=(client_socket, addr))
@@ -82,7 +80,10 @@ class Server:
                 break
 
         client_socket.close()
-        self.listeners.pop(addr[0])  # todo: check if is in listeners before
+
+        if addr[0] in self.listeners.keys():
+            self.listeners.pop(addr[0])
+
         return False
 
     def handle_req(self, client_socket, req, addr):
@@ -95,13 +96,17 @@ class Server:
         """
         cmd, *params = req.split()
 
-        # special exception
+        # special exceptions
+        # todo: make match case
         if cmd == 'reload':
             res = Server.handle_reload(client_socket)
         elif cmd == 'history':
             res = methods.Methods.history(addr)
         elif cmd == 'send_to':
             res = self.send_to(*params)
+        elif cmd == 'am_listener':
+            self.listeners[addr[0]] = client_socket
+            res = 'current connection in listening mode'
         else:
             try:
                 res = getattr(methods.Methods, cmd)(*params)
