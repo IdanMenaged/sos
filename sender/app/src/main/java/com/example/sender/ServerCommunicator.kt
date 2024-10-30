@@ -20,40 +20,41 @@ private const val TIMEOUT = 10000
  * Handles server communication
  */
 class ServerCommunicator {
+    private val socket = initSocket()
+    private val outputStream = socket?.getOutputStream()
+    private val inputStream = socket?.getInputStream()
+
     /**
      * send a request to the server and receive a response.
      * logs the response.
      * msg (String): message to send to the server
      */
     fun sendNRecv(msg: String) {
-        var socket: Socket? = null
-        var outputStream: OutputStream? = null
-        var inputStream: InputStream? = null
         try {
-            socket = initSocket()
-
             // Send message to server
-            outputStream = socket.getOutputStream()
-            sendMessageToServer(msg, outputStream)
-
-            // Receive message from server
-            inputStream = socket.getInputStream()
-            val response = receiveMessageFromServer(inputStream)
-
-            Log.d("ServerCommunicator", "Response received: $response")
-
+            if (outputStream != null) {
+                sendMessageToServer(msg, outputStream)
+            }
+            if (inputStream != null) {
+                val response = receiveMessageFromServer(inputStream)
+                Log.d("ServerCommunicator", "Response received: $response")
+            }
+            else {
+                Log.e("ServerCommunicator", "message could not be sent. socket is null")
+            }
         } catch (e: Exception) {
             Log.e("ServerCommunicator", "Error in sendNRecv", e)
-        } finally {
-            // Close streams and socket after communication is done
-            // todo: close connection in a different function
-            try {
-                outputStream?.close()
-                inputStream?.close()
-                socket?.close()
-            } catch (e: Exception) {
-                Log.e("ServerCommunicator", "Error closing resources", e)
-            }
+        }
+    }
+
+    fun closeConnection() {
+        // todo: close connection in a different function
+        try {
+            outputStream?.close()
+            inputStream?.close()
+            socket?.close()
+        } catch (e: Exception) {
+            Log.e("ServerCommunicator", "Error closing resources", e)
         }
     }
 
@@ -108,11 +109,16 @@ class ServerCommunicator {
     /**
      * initiate a socket with connection to the server
      */
-    private fun initSocket(): Socket {
-        val socket = Socket()
-        socket.soTimeout = TIMEOUT
-        socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
+    private fun initSocket(): Socket? {
+        try {
+            val socket = Socket()
+            socket.soTimeout = TIMEOUT
+            socket.connect(InetSocketAddress(SERVER_IP, SERVER_PORT), TIMEOUT)
 
-        return socket
+            return socket
+        } catch (e: Exception) {
+            Log.e("ServerCommunicator", "error initiating server: $e")
+            return null
+        }
     }
 }

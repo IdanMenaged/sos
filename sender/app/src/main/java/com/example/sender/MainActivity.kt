@@ -51,10 +51,10 @@ class MainActivity : ComponentActivity() {
     fun SosButton() {
         Button(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
-//                val serverCommunicator = ServerCommunicator()
-//                serverCommunicator.sendNRecv("echo hi")
-                // todo: close connection manually
-                val listener = Listener()
+                val serverCommunicator = ServerCommunicator()
+                serverCommunicator.sendNRecv("echo hi")
+                serverCommunicator.closeConnection()
+//                val listener = Listener()  // todo: create its own thread that runs when app opens rather than when button is pressed
             }
         }) {
             Text("SOS")
