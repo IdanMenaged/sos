@@ -46,6 +46,7 @@ class ServerCommunicator {
             Log.e("ServerCommunicator", "Error in sendNRecv", e)
         } finally {
             // Close streams and socket after communication is done
+            // todo: close connection in a different function
             try {
                 outputStream?.close()
                 inputStream?.close()

@@ -51,8 +51,10 @@ class MainActivity : ComponentActivity() {
     fun SosButton() {
         Button(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
-                val serverCommunicator = ServerCommunicator()
-                serverCommunicator.sendNRecv("echo hi")
+//                val serverCommunicator = ServerCommunicator()
+//                serverCommunicator.sendNRecv("echo hi")
+                // todo: close connection manually
+                val listener = Listener()
             }
         }) {
             Text("SOS")

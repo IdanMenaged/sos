@@ -4,13 +4,17 @@
 
 package com.example.sender
 
+import android.util.Log
+
 /**
  * a class that listens to messages from the server on a different socket and thread than the one
  * sending messages. responsible for receiving the sos messages of others
  */
 class Listener {
-    val serverCommunicator = ServerCommunicator()
-    // todo: add system for server to differentiate senders and listeners
-    // todo: send an "i'm a listener" message
-    // todo: wait for data
+    private val serverCommunicator = ServerCommunicator()
+
+    init {
+        serverCommunicator.sendNRecv("am_listener")
+        // todo: wait for data
+    }
 }
