@@ -30,7 +30,7 @@ class Server:
         """
         constructor
         """
-        self.clients = {}  # ip: socket
+        self.listeners = {}  # ip: socket
 
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,7 +47,7 @@ class Server:
         while True:
             client_socket, addr = self.sock.accept()
             
-            self.clients[addr[0]] = client_socket
+            self.listeners[addr[0]] = client_socket  # todo: add only if is a listener
             
             methods.Methods.new_hist(addr)
             
@@ -82,7 +82,7 @@ class Server:
                 break
 
         client_socket.close()
-        self.clients.pop(addr[0])
+        self.listeners.pop(addr[0])  # todo: check if is in listeners before
         return False
 
     def handle_req(self, client_socket, req, addr):
@@ -137,10 +137,10 @@ class Server:
         Returns:
             str: message to send back to the sending client
         """
-        if target_ip not in self.clients.keys():
-            return f'client {target_ip} is not connected'
+        if target_ip not in self.listeners.keys():
+            return f'client {target_ip} does not have a listener connection'
         else:
-            target_socket = self.clients[target_ip]
+            target_socket = self.listeners[target_ip]
             Protocol.send(target_socket, msg)
 
             return 'message sent'
