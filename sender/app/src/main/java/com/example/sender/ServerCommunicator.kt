@@ -33,10 +33,10 @@ class ServerCommunicator {
         try {
             // Send message to server
             if (outputStream != null) {
-                sendMessageToServer(msg, outputStream)
+                sendMessageToServer(msg)
             }
             if (inputStream != null) {
-                val response = receiveMessageFromServer(inputStream)
+                val response = receiveMessageFromServer()
                 Log.d("ServerCommunicator", "Response received: $response")
             }
             else {
@@ -48,7 +48,6 @@ class ServerCommunicator {
     }
 
     fun closeConnection() {
-        // todo: close connection in a different function
         try {
             outputStream?.close()
             inputStream?.close()
@@ -63,12 +62,12 @@ class ServerCommunicator {
      * msg (String): message to send to the server
      * outputStream (OutputStream): output stream of the socket
      */
-    private fun sendMessageToServer(msg: String, outputStream: OutputStream) {
+    private fun sendMessageToServer(msg: String) {
         val formattedMsg = formatMessage(msg)
         try {
             // Send the message
-            outputStream.write(formattedMsg)
-            outputStream.flush()
+            outputStream?.write(formattedMsg)
+            outputStream?.flush()
         } catch (e: Exception) {
             Log.e("ServerCommunicator", "Error in sendMessageToServer", e)
         }
@@ -79,19 +78,20 @@ class ServerCommunicator {
      * inputStream (InputStream): input stream of the socket
      * returns (String): message received
      */
-    private fun receiveMessageFromServer(inputStream: InputStream): String? {
+     fun receiveMessageFromServer(): String? {
         try {
             // Get the message length
             val msgLenBytes = ByteArray(MSG_LEN_PADDING)
-            inputStream.read(msgLenBytes)
+            inputStream?.read(msgLenBytes)
             val msgLen = String(msgLenBytes).trim().toInt()
 
             // Read the actual message
             val messageBytes = ByteArray(msgLen)
-            inputStream.read(messageBytes)
+            inputStream?.read(messageBytes)
 
             return String(messageBytes)
         } catch (e: Exception) {
+            // todo: change the behavior for listeners. listeners should reconnect after a timeout exception.
             Log.e("ServerCommunicator", "Error in receiveMessageFromServer", e)
         }
 
