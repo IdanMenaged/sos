@@ -1,3 +1,8 @@
+"""
+Idan Menaged
+constants
+"""
+
 PORT = 4000
 EXIT_CODES = {'quit'}
 BIN_METHODS = {'send_file'}  # methods using binary data and thus using the special protocol for binary
@@ -14,5 +19,6 @@ PARAM_COUNTS = {
     'quit': 0,
     'exit': 0,
     'reload': 0,
-    'history': 0
+    'history': 0,
+    'send_to': 2,
 }

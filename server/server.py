@@ -1,4 +1,5 @@
 """
+Server
 Idan Menaged
 """
 import importlib
@@ -29,6 +30,8 @@ class Server:
         """
         constructor
         """
+        self.listeners = {}  # ip: socket
+
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.bind((ip, port))
@@ -43,7 +46,9 @@ class Server:
         """
         while True:
             client_socket, addr = self.sock.accept()
+            
             methods.Methods.new_hist(addr)
+            
             clnt_thread = threading.Thread(target=self.handle_client, args=(client_socket, addr))
             clnt_thread.start()
 
@@ -75,23 +80,33 @@ class Server:
                 break
 
         client_socket.close()
+
+        if addr[0] in self.listeners.keys():
+            self.listeners.pop(addr[0])
+
         return False
 
-    @staticmethod
-    def handle_req(client_socket, req, addr):
+    def handle_req(self, client_socket, req, addr):
         """
         determines a response based on a request
+        :param addr: client address, format: (ip, port)
         :param client_socket: client socket
         :param req: request
         :return: response
         """
         cmd, *params = req.split()
 
-        # special exception
+        # special exceptions
+        # todo: make match case
         if cmd == 'reload':
             res = Server.handle_reload(client_socket)
         elif cmd == 'history':
             res = methods.Methods.history(addr)
+        elif cmd == 'send_to':
+            res = self.send_to(*params)
+        elif cmd == 'am_listener':
+            self.listeners[addr[0]] = client_socket
+            res = 'current connection in listening mode'
         else:
             try:
                 res = getattr(methods.Methods, cmd)(*params)
@@ -100,9 +115,6 @@ class Server:
                     res = b'illegal command'
                 else:
                     res = 'illegal command'
-
-            # for testing errors
-            # res = getattr(methods.Methods, cmd)(*params)
 
         return res
 
@@ -119,6 +131,24 @@ class Server:
 
         importlib.reload(sys.modules['methods'])
         return 'module reloaded'
+    
+    def send_to(self, target_ip, msg):
+        """send a message to a certain connected client
+
+        Args:
+            target_ip (str): ip of the connected client
+            msg (str): message to send
+
+        Returns:
+            str: message to send back to the sending client
+        """
+        if target_ip not in self.listeners.keys():
+            return f'client {target_ip} does not have a listener connection'
+        else:
+            target_socket = self.listeners[target_ip]
+            Protocol.send(target_socket, msg)
+
+            return 'message sent'
 
 
 if __name__ == '__main__':
