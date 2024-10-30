@@ -42,6 +42,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        // create listener thread
+        CoroutineScope(Dispatchers.IO).launch {
+            val listener = Listener()
+            // todo: needs to run even when app is closed
+        }
     }
 
     /**
@@ -54,7 +60,6 @@ class MainActivity : ComponentActivity() {
                 val serverCommunicator = ServerCommunicator()
                 serverCommunicator.sendNRecv("echo hi")
                 serverCommunicator.closeConnection()
-//                val listener = Listener()  // todo: create its own thread that runs when app opens rather than when button is pressed
             }
         }) {
             Text("SOS")
