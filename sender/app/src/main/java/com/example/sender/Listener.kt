@@ -11,7 +11,6 @@ import android.util.Log
  * sending messages. responsible for receiving the sos messages of others
  */
 class Listener : ServerCommunicator() {
-    // todo: go back to listening after a message
     // todo: disable timeout
     init {
         sendNRecv("am_listener")
