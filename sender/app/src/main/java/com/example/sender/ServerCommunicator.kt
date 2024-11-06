@@ -13,13 +13,13 @@ import java.net.Socket
 private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
-private const val TIMEOUT = 10000
+private const val TIMEOUT = 999999999
 
 
 /**
  * Handles server communication
  */
-class ServerCommunicator {
+open class ServerCommunicator {
     private val socket = initSocket()
     private val outputStream = socket?.getOutputStream()
     private val inputStream = socket?.getInputStream()
