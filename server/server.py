@@ -46,10 +46,11 @@ class Server:
         """
         while True:
             client_socket, addr = self.sock.accept()
-            
+
             methods.Methods.new_hist(addr)
-            
-            clnt_thread = threading.Thread(target=self.handle_client, args=(client_socket, addr))
+
+            clnt_thread = threading.Thread(target=self.handle_client,
+                                           args=(client_socket, addr))
             clnt_thread.start()
 
     def handle_client(self, client_socket, addr):
@@ -131,7 +132,7 @@ class Server:
 
         importlib.reload(sys.modules['methods'])
         return 'module reloaded'
-    
+
     def send_to(self, target_ip, msg):
         """send a message to a certain connected client
 

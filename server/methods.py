@@ -13,7 +13,8 @@ class Methods:
     """
     methods server can execute
     """
-    hist = {}  # history of commands sent in the format of { (ip, port): ['placeholder'] }
+    hist = {}  # history of commands sent in the format of
+    # { (ip, port): ['placeholder'] }
     lock = threading.Lock()
 
     @staticmethod

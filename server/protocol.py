@@ -3,7 +3,8 @@ Idan Menaged
 protocol for sending messages between server and client
 """
 
-MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its len
+MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its
+# len
 MAX_CHUNK_SIZE = 1024
 BIN_DONE = -1  # code to send when a binary is over
 
@@ -46,7 +47,8 @@ class Protocol:
         while len_received < MSG_LEN_PADDING:
             packet = socket.recv(MSG_LEN_PADDING - len_received)  # todo: test
             len_received += len(packet)
-            content_len += int(packet.decode())  # todo: make int only at the end
+            content_len += int(packet.decode())  # todo: make int only at the
+            # end
 
         len_received = 0
         content = ""
@@ -66,7 +68,9 @@ class Protocol:
         len_sent = 0
         len_to_send = len(content)
         while len_sent < len_to_send:
-            chunk_size = min(MAX_CHUNK_SIZE, len(content))  # sometimes the content is not perfectly divisible by
+            chunk_size = min(MAX_CHUNK_SIZE, len(content))  # sometimes the
+            # content is not perfectly divisible by
+
             # MAX_CHUNK_SIZE
             chunk = content[:chunk_size]
             content = content[chunk_size:]
