@@ -39,19 +39,19 @@ class Protocol:
     def receive(socket):
         """
         :param socket: comm socket
-        :return: string with content
+        :return: stricontent_lenng with content
         """
         content_len = 0
         len_received = 0
         while len_received < MSG_LEN_PADDING:
-            packet = socket.recv(MSG_LEN_PADDING)
+            packet = socket.recv(MSG_LEN_PADDING - len_received)  # todo: test
             len_received += len(packet)
-            content_len += int(packet.decode())
+            content_len += int(packet.decode())  # todo: make int only at the end
 
         len_received = 0
         content = ""
         while len_received < content_len:
-            packet = socket.recv(content_len)
+            packet = socket.recv(content_len - len_received)
             len_received += len(packet)
             content += packet.decode()
         return content
@@ -75,7 +75,7 @@ class Protocol:
         socket.send(Protocol.add_prefix(str(BIN_DONE).encode()))
 
     @staticmethod
-    def receive_bin(socket):
+    def receive_bin(socket):  # todo: fix same as receive
         """
         receive binary data
         :param socket: socket
