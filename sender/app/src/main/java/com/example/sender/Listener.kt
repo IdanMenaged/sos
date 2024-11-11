@@ -11,7 +11,7 @@ import android.util.Log
  * sending messages. responsible for receiving the sos messages of others
  */
 class Listener : ServerCommunicator() {
-    // todo: disable timeout
+    // todo: disable timeout (need to check with ayelet if current state is good)
     init {
         sendNRecv("am_listener")
         while (true) {
