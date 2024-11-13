@@ -133,7 +133,7 @@ class Server:
         importlib.reload(sys.modules['methods'])
         return 'module reloaded'
 
-    def send_to(self, target_ip, msg):
+    def send_to_single(self, target_ip, msg):
         """send a message to a certain connected client
 
         Args:
@@ -151,6 +151,12 @@ class Server:
 
             return 'message sent'
 
+    def send_to(self, msg: str, *target_ips):
+        log = []
+        for ip in target_ips:
+            res = self.send_to_single(target_ip=ip, msg=msg)
+            log.append(f'{ip}: {res}')
+        return "\n".join(log)
 
 if __name__ == '__main__':
     main()

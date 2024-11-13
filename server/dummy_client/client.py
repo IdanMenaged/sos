@@ -45,7 +45,7 @@ class Client:
         :return: is req valid
         """
         cmd, *params = req.split()
-        return cmd in PARAM_COUNTS.keys() and len(params) == PARAM_COUNTS[cmd]
+        return cmd in PARAM_COUNTS.keys() and (len(params) == PARAM_COUNTS[cmd] or PARAM_COUNTS[cmd] == -1)
 
     def send_request_to_server(self, req):
         """
