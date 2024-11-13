@@ -11,8 +11,7 @@ import java.net.Socket
 private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
-private const val TIMEOUT = 999999999 // todo: after listener has no timeout, bring back down to
-// something more reasonable
+private const val TIMEOUT = 10000
 
 
 /**
@@ -90,7 +89,6 @@ open class ServerCommunicator {
 
             return String(messageBytes)
         } catch (e: Exception) {
-            // todo: change the behavior for listeners. listeners should reconnect after a timeout exception.
             Log.e("ServerCommunicator", "Error in receiveMessageFromServer", e)
         }
 
