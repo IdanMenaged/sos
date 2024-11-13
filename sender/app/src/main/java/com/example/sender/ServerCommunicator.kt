@@ -7,6 +7,7 @@ package com.example.sender
 import android.util.Log
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketTimeoutException
 
 private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
@@ -88,7 +89,16 @@ open class ServerCommunicator {
             inputStream?.read(messageBytes)
 
             return String(messageBytes)
-        } catch (e: Exception) {
+        }
+        catch (e: SocketTimeoutException) {
+            if (this is Listener) {
+                Log.w("Listener", "connection timed out, reconnecting")
+            }
+            else {
+                Log.e("ServerCommunicator", "error in receiveMessageFromServer", e)
+            }
+        }
+        catch (e: Exception) {
             Log.e("ServerCommunicator", "Error in receiveMessageFromServer", e)
         }
 
