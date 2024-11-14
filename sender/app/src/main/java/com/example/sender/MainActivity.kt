@@ -45,13 +45,12 @@ class MainActivity : ComponentActivity() {
         }
 
         // create listener thread
-        CoroutineScope(Dispatchers.IO).launch {
-            val listener = Listener()
-            // todo: needs to run even when app is closed and when server goes down and back up
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val listener = Listener()
+//            // todo: needs to run even when app is closed and when server goes down and back up
+//        }
 
         val intent = Intent(this, ListenerService::class.java)
-        intent.putExtra("name", "ListenerService")
         startService(intent)
     }
 
