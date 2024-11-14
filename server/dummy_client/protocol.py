@@ -48,10 +48,9 @@ class Protocol:
         content_len = MIN_CONTENT_LEN
         len_received = MIN_LEN_RECEIVED
         while len_received < MSG_LEN_PADDING:
-            packet = socket.recv(MSG_LEN_PADDING - len_received)  # todo: test
+            packet = socket.recv(MSG_LEN_PADDING - len_received)
             len_received += len(packet)
-            content_len += int(packet.decode())  # todo: make int only at the
-            # end
+            content_len += int(packet.decode())
 
         len_received = MIN_LEN_RECEIVED
         content = ""
@@ -82,7 +81,7 @@ class Protocol:
         socket.send(Protocol.add_prefix(str(BIN_DONE).encode()))
 
     @staticmethod
-    def receive_bin(socket):  # todo: fix same as receive
+    def receive_bin(socket):
         """
         receive binary data
         :param socket: socket
