@@ -3,9 +3,15 @@ Idan Menaged
 protocol for sending messages between server and client
 """
 
-MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its len
+MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its
+# len
 MAX_CHUNK_SIZE = 1024
 BIN_DONE = -1  # code to send when a binary is over
+MIN_CONTENT_LEN = 0
+MIN_LEN_RECEIVED = 0
+MIN_LEN_SENT = 0
+INITIAL_DATA = b''
+INITIAL_CHUNK_DATA = b''
 
 
 class Protocol:
@@ -37,19 +43,20 @@ class Protocol:
     def receive(socket):
         """
         :param socket: comm socket
-        :return: string with content
+        :return: stricontent_lenng with content
         """
-        content_len = 0
-        len_received = 0
+        content_len = MIN_CONTENT_LEN
+        len_received = MIN_LEN_RECEIVED
         while len_received < MSG_LEN_PADDING:
-            packet = socket.recv(MSG_LEN_PADDING)
+            packet = socket.recv(MSG_LEN_PADDING - len_received)  # todo: test
             len_received += len(packet)
-            content_len += int(packet.decode())
+            content_len += int(packet.decode())  # todo: make int only at the
+            # end
 
-        len_received = 0
+        len_received = MIN_LEN_RECEIVED
         content = ""
         while len_received < content_len:
-            packet = socket.recv(content_len)
+            packet = socket.recv(content_len - len_received)
             len_received += len(packet)
             content += packet.decode()
         return content
@@ -61,10 +68,12 @@ class Protocol:
         :param socket: socket
         :param content: content to send
         """
-        len_sent = 0
+        len_sent = MIN_LEN_SENT
         len_to_send = len(content)
         while len_sent < len_to_send:
-            chunk_size = min(MAX_CHUNK_SIZE, len(content))  # sometimes the content is not perfectly divisible by
+            chunk_size = min(MAX_CHUNK_SIZE, len(content))  # sometimes the
+            # content is not perfectly divisible by
+
             # MAX_CHUNK_SIZE
             chunk = content[:chunk_size]
             content = content[chunk_size:]
@@ -73,29 +82,29 @@ class Protocol:
         socket.send(Protocol.add_prefix(str(BIN_DONE).encode()))
 
     @staticmethod
-    def receive_bin(socket):
+    def receive_bin(socket):  # todo: fix same as receive
         """
         receive binary data
         :param socket: socket
         :return: data received
         """
-        data = b''
+        data = INITIAL_DATA
         while True:
-            content_len = 0
-            len_received = 0
+            content_len = MIN_CONTENT_LEN
+            len_received = MIN_LEN_RECEIVED
             while len_received < MSG_LEN_PADDING:
                 packet = socket.recv(MSG_LEN_PADDING)
                 len_received += len(packet)
                 content_len += int(packet.decode())
 
-            len_received = 0
-            chunk = b""
+            len_received = MIN_LEN_RECEIVED
+            chunk = INITIAL_CHUNK_DATA
             while len_received < content_len:
-                packet = socket.recv(content_len)
+                packet = socket.recv(content_len - len_received)
                 len_received += len(packet)
                 chunk += packet
 
-            if chunk == b'-1':
+            if chunk == str(BIN_DONE).encode():
                 break
 
             data += chunk

@@ -37,8 +37,6 @@ class Protocol:
         content = content.encode()  # convert to bytes
         content = Protocol.add_prefix(content)
 
-        print(content)
-
         socket.send(content)
 
     @staticmethod
@@ -102,7 +100,7 @@ class Protocol:
             len_received = MIN_LEN_RECEIVED
             chunk = INITIAL_CHUNK_DATA
             while len_received < content_len:
-                packet = socket.recv(content_len)
+                packet = socket.recv(content_len - len_received)
                 len_received += len(packet)
                 chunk += packet
 
