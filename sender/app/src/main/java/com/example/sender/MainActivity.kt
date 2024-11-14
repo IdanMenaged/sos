@@ -5,6 +5,7 @@
 
 package com.example.sender
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -48,6 +49,10 @@ class MainActivity : ComponentActivity() {
             val listener = Listener()
             // todo: needs to run even when app is closed and when server goes down and back up
         }
+
+        val intent = Intent(this, ListenerService::class.java)
+        intent.putExtra("name", "ListenerService")
+        startService(intent)
     }
 
     /**
