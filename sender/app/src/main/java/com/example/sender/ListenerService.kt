@@ -30,18 +30,12 @@ class ListenerService: Service() {
         return START_STICKY
     }
 
-//    override fun stopService(name: Intent?): Boolean {
-//        Log.d("ListenerService","Stopping Service")
-//
-//        return super.stopService(name)
-//    }
-
     override fun onDestroy() {
         Toast.makeText(
             applicationContext, "Service execution completed",
             Toast.LENGTH_SHORT
         ).show()
-        Log.d("Stopped","Service Stopped")
+        Log.d("ListenerService","Service Stopped")
         super.onDestroy()
     }
 }
