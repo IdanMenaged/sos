@@ -152,6 +152,12 @@ class Server:
             return 'message sent'
 
     def send_to(self, msg: str, *target_ips):
+        """
+        send a message to multiple ips
+        :param msg: message to send
+        :param target_ips: ips to send to
+        :return: msg detailing which ips were sent to and which failed
+        """
         log = []
         for ip in target_ips:
             res = self.send_to_single(target_ip=ip, msg=msg)
