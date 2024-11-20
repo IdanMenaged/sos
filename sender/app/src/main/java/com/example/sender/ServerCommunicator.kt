@@ -28,7 +28,7 @@ open class ServerCommunicator {
      * logs the response.
      * msg (String): message to send to the server
      */
-    fun sendNRecv(msg: String) {
+    fun sendNRecv(msg: String): String? {
         try {
             // Send message to server
             if (outputStream != null) {
@@ -37,6 +37,8 @@ open class ServerCommunicator {
             if (inputStream != null) {
                 val response = receiveMessageFromServer()
                 Log.d("ServerCommunicator", "Response received: $response")
+
+                return response
             }
             else {
                 Log.e("ServerCommunicator", "message could not be sent. socket is null")
@@ -44,6 +46,7 @@ open class ServerCommunicator {
         } catch (e: Exception) {
             Log.e("ServerCommunicator", "Error in sendNRecv", e)
         }
+        return "no response"
     }
 
     fun closeConnection() {
