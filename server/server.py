@@ -10,6 +10,8 @@ from constants import *
 import methods
 import threading
 
+from auth import Auth
+
 IP = '0.0.0.0'
 SIM_USERS = 1
 
@@ -31,6 +33,7 @@ class Server:
         constructor
         """
         self.listeners = {}  # ip: socket
+        self.auth = Auth()
 
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -108,6 +111,8 @@ class Server:
         elif cmd == 'am_listener':
             self.listeners[addr[0]] = client_socket
             res = 'current connection in listening mode'
+        elif cmd == 'login':
+            res = self.auth.login(*params)
         else:
             try:
                 res = getattr(methods.Methods, cmd)(*params)

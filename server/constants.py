@@ -22,4 +22,5 @@ PARAM_COUNTS = {
     'reload': 0,
     'history': 0,
     'send_to': -1,
+    'login': 2
 }
