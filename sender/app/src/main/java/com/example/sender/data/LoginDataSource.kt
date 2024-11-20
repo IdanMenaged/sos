@@ -13,20 +13,30 @@ import java.io.IOException
 class LoginDataSource {
     private val serverCommunicator = ServerCommunicator()
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(username: String, password: String, callback: (Result<LoggedInUser>) -> Unit) {
+        // todo: modify the rest of the code to use the callback
         try {
+            // Launch a new coroutine for background operation
             CoroutineScope(Dispatchers.IO).launch {
+                // Perform the login operation asynchronously
                 val res = serverCommunicator.sendNRecv("login $username $password")
+
+                // Handle result based on server response
                 if (res == "success") {
                     val user = LoggedInUser(java.util.UUID.randomUUID().toString(), username)
-                    return Result.Success(user)
+                    // Invoke the callback with success
+                    callback(Result.Success(user))
+                } else {
+                    // Invoke the callback with an error result
+                    callback(Result.Error(Exception("Wrong credentials")))
                 }
-                return Result.Error(Exception("Wrong credentials"))
             }
         } catch (e: Throwable) {
-            return Result.Error(IOException("Error logging in", e))
+            // In case of failure, invoke callback with error
+            callback(Result.Error(IOException("Error logging in", e)))
         }
     }
+
 
     fun logout() {
         // TODO: revoke authentication
