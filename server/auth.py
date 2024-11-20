@@ -1,6 +1,13 @@
 from db import DBManager
 
 
+def main():
+    a = Auth()
+    a.login('fake', 'password')  # fail
+    a.login('idan', 'password')  # success
+    a.login('ayelet', 'wrong')  # fail
+
+
 class Auth(DBManager):
     def login(self, username: str, password: str):
         """
@@ -24,7 +31,4 @@ class Auth(DBManager):
 
 
 if __name__ == '__main__':
-    a = Auth()
-    a.login('fake', 'password')  # fail
-    a.login('idan', 'password')  # success
-    a.login('ayelet', 'wrong')  # fail
+    main()
