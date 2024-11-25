@@ -57,7 +57,8 @@ class MainActivity : ComponentActivity() {
         Button(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
                 val serverCommunicator = ServerCommunicator()
-                serverCommunicator.sendNRecv("send_to sos 127.0.0.1")
+                serverCommunicator.sendNRecv("send_to sos 10.20.74.126")  // change ip based
+                // on testing env
                 serverCommunicator.closeConnection()
             }
         }) {
