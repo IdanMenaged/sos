@@ -110,6 +110,7 @@ class Server:
             res = self.send_to(*params)
         elif cmd == 'am_listener':
             self.listeners[addr[0]] = client_socket
+            print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
         elif cmd == 'login':
             res = self.auth.login(*params)
