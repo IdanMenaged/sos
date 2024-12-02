@@ -15,6 +15,9 @@ import android.widget.Toast
 import com.example.sender.databinding.ActivityLoginBinding
 
 import com.example.sender.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -83,17 +86,21 @@ class LoginActivity : AppCompatActivity() {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
-                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            loginViewModel.login(
+                                username.text.toString(),
+                                password.text.toString()
+                            )
+                        }
                 }
                 false
             }
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                CoroutineScope(Dispatchers.IO).launch {
+                    loginViewModel.login(username.text.toString(), password.text.toString())
+                }
             }
         }
     }
