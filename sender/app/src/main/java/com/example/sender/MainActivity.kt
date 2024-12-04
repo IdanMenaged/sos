@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.sender.ui.login.LoginActivity
 import com.example.sender.ui.theme.SenderTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,12 +45,8 @@ class MainActivity : ComponentActivity() {
         }
 
         // start listener
-//        val intent = Intent(this, ListenerService::class.java)
-//        startService(intent)
-
-        // go to login screen (for testing)
-        val loginIntent = Intent(this, LoginActivity::class.java)
-        startActivity(loginIntent)
+        val intent = Intent(this, ListenerService::class.java)
+        startService(intent)
 
     }
 
@@ -63,7 +58,7 @@ class MainActivity : ComponentActivity() {
         Button(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
                 val serverCommunicator = ServerCommunicator()
-                serverCommunicator.sendNRecv("send_to sos 10.20.75.67")  // change ip based
+                serverCommunicator.sendNRecv("send_to sos 10.20.73.153")  // change ip based
                 // on testing env
                 serverCommunicator.closeConnection()
             }
