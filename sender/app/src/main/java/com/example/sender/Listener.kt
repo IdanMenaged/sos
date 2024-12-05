@@ -12,8 +12,8 @@ import android.util.Log
  */
 class Listener : ServerCommunicator() {
     init {
-        sendNRecv("am_listener")
         while (true) {
+            sendNRecv("am_listener")
             val msg = receiveMessageFromServer()
             if (msg != null) {
                 Log.d("Listener", msg)
