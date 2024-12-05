@@ -2,7 +2,6 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -119,7 +118,12 @@ class LoginActivity : ComponentActivity() {
             startActivity(intent)
         }
         else {
-            Log.d("Login", "f")
+            runOnUiThread() {
+                Toast.makeText(
+                    this, "Login failed!",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
