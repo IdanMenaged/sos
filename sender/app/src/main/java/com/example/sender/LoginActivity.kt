@@ -1,5 +1,6 @@
 package com.example.sender
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -114,7 +115,8 @@ class LoginActivity : ComponentActivity() {
      */
     private fun handleLoginResponse(res: String) {
         if (res == "success") {
-            Log.d("Login", "s")
+            val intent = Intent(this, AppActivity::class.java)
+            startActivity(intent)
         }
         else {
             Log.d("Login", "f")

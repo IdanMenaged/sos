@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 /**
  * Main activity for the app
  */
-class MainActivity : ComponentActivity() {
+class AppActivity : ComponentActivity() {
     /**
      * defines the ui
      */
@@ -34,10 +34,35 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
+            SenderTheme {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    SosButton()
+                }
+            }
         }
 
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
+//        // start listener
+        val intent = Intent(this, ListenerService::class.java)
+        startService(intent)
+    }
+
+    /**
+     * defines the SOS button element
+     */
+    @Composable
+    fun SosButton() {
+        Button(onClick = {
+            CoroutineScope(Dispatchers.IO).launch {
+                val serverCommunicator = ServerCommunicator()
+                serverCommunicator.sendNRecv("send_to sos 10.20.72.33")  // change ip based
+                // on testing env
+                serverCommunicator.closeConnection()
+            }
+        }) {
+            Text("SOS")
+        }
     }
 }
