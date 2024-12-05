@@ -40,7 +40,7 @@ class LoginActivity : ComponentActivity() {
                     contentAlignment = Alignment.Center
                 ) {
                     // content here
-                    SubmitForm()
+                    LoginForm()
                 }
             }
         }
@@ -49,9 +49,9 @@ class LoginActivity : ComponentActivity() {
     }
 
     @Composable
-    fun SubmitForm() {
-        var field1Value by remember { mutableStateOf("") }
-        var field2Value by remember { mutableStateOf("") }
+    fun LoginForm() {
+        var username by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
         var isLoading by remember { mutableStateOf(false) }
 
         Column(
@@ -61,9 +61,9 @@ class LoginActivity : ComponentActivity() {
         ) {
             // First TextField
             TextField(
-                value = field1Value,
-                onValueChange = { field1Value = it },
-                label = { Text("Field 1") },
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("Username") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
@@ -71,9 +71,9 @@ class LoginActivity : ComponentActivity() {
 
             // Second TextField
             TextField(
-                value = field2Value,
-                onValueChange = { field2Value = it },
-                label = { Text("Field 2") },
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp)
@@ -85,7 +85,7 @@ class LoginActivity : ComponentActivity() {
                     isLoading = true
                     CoroutineScope(Dispatchers.IO).launch {
                         val serverCommunicator = ServerCommunicator()
-                        val serverCommand = "send_to ${field1Value} ${field2Value}"
+                        val serverCommand = "send_to ${username} ${password}"
                         serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
                         serverCommunicator.closeConnection()
                         isLoading = false
