@@ -44,10 +44,12 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // start listener
-        val intent = Intent(this, ListenerService::class.java)
-        startService(intent)
+//        // start listener
+//        val intent = Intent(this, ListenerService::class.java)
+//        startService(intent)
 
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
     }
 
     /**
