@@ -1,6 +1,8 @@
 package com.example.sender
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -86,9 +88,13 @@ class LoginActivity : ComponentActivity() {
                     CoroutineScope(Dispatchers.IO).launch {
                         val serverCommunicator = ServerCommunicator()
                         val serverCommand = "login $username $password"
-                        serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
+                        val response = serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
                         serverCommunicator.closeConnection()
                         isLoading = false
+
+                        if (response != null) {
+                            handleLoginResponse(response)
+                        }
                     }
                 },
                 enabled = !isLoading
@@ -99,6 +105,19 @@ class LoginActivity : ComponentActivity() {
                     Text("Submit")
                 }
             }
+        }
+    }
+
+    /**
+     * handle response from server after a login attempt
+     * @param res response from server
+     */
+    private fun handleLoginResponse(res: String) {
+        if (res == "success") {
+            Log.d("Login", "s")
+        }
+        else {
+            Log.d("Login", "f")
         }
     }
 
