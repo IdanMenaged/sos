@@ -42,7 +42,8 @@ class DBManager:
             CREATE TABLE IF NOT EXISTS Users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
-                password TEXT NOT NULL
+                password TEXT NOT NULL,
+                connections TEXT
             )
         """
         self.exec(query)
