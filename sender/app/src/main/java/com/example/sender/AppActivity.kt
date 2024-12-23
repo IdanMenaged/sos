@@ -63,6 +63,7 @@ class AppActivity : ComponentActivity() {
 
                 // notification
                 // TODO: check if should be run on ui thread
+                // TODO: im stupid this should be in the listener
                 Toast.makeText(this@AppActivity, msg, Toast.LENGTH_SHORT).show()
 
                 serverCommunicator.closeConnection()

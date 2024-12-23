@@ -7,6 +7,8 @@ def main():
     a.login('idan', 'password')  # success
     a.login('ayelet', 'wrong')  # fail
 
+    a.signup("newuser", "newpassword")
+
 
 class Auth(DBManager):
     def login(self, username: str, password: str):
@@ -28,6 +30,20 @@ class Auth(DBManager):
             return 'success'
         print('login failed')
         return 'failure'
+
+    def signup(self, username: str, password: str):
+        """
+        add user to db
+        :param username: name
+        :param password: password
+        :return: success or failure
+        """
+        try:
+            query = 'INSERT INTO users (name, password) VALUES (?, ?)'
+            self.exec(query, username, password)
+            return "success"
+        except:
+            return "failure"
 
 
 if __name__ == '__main__':
