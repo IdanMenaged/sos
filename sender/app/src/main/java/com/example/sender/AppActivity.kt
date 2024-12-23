@@ -59,12 +59,7 @@ class AppActivity : ComponentActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val serverCommunicator = ServerCommunicator()
                 // change ip based on testing env
-                val msg = serverCommunicator.sendNRecv("send_to sos 10.20.72.33")
-
-                // notification
-                // TODO: check if should be run on ui thread
-                // TODO: im stupid this should be in the listener
-                Toast.makeText(this@AppActivity, msg, Toast.LENGTH_SHORT).show()
+                serverCommunicator.sendNRecv("send_to sos 10.20.72.33")
 
                 serverCommunicator.closeConnection()
             }
