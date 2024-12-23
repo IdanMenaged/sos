@@ -118,6 +118,7 @@ class Server:
         # todo: test
         elif cmd == 'signup':
             res = self.auth.signup(*params)
+        # TODO: add social funcs
         else:
             try:
                 res = getattr(methods.Methods, cmd)(*params)

@@ -26,6 +26,8 @@ class Social(DBManager):
         q = 'UPDATE users SET connections = ? WHERE id = ?'
         self.exec(q, connections, befriender)
 
+    def remove_connection(self):
+
 
 if __name__ == '__main__':
     main()
