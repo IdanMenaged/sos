@@ -112,8 +112,12 @@ class Server:
             self.listeners[addr[0]] = client_socket
             print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
+        # todo: use getattr for auth functions
         elif cmd == 'login':
             res = self.auth.login(*params)
+        # todo: test
+        elif cmd == 'signup':
+            res = self.auth.signup(*params)
         else:
             try:
                 res = getattr(methods.Methods, cmd)(*params)
