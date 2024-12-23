@@ -7,6 +7,7 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -57,8 +58,13 @@ class AppActivity : ComponentActivity() {
         Button(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
                 val serverCommunicator = ServerCommunicator()
-                serverCommunicator.sendNRecv("send_to sos 10.20.72.33")  // change ip based
-                // on testing env
+                // change ip based on testing env
+                val msg = serverCommunicator.sendNRecv("send_to sos 10.20.72.33")
+
+                // notification
+                // TODO: check if should be run on ui thread
+                Toast.makeText(this@AppActivity, msg, Toast.LENGTH_SHORT).show()
+
                 serverCommunicator.closeConnection()
             }
         }) {
