@@ -2,6 +2,7 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -93,7 +94,7 @@ class LoginActivity : ComponentActivity() {
                         isLoading = false
 
                         if (response != null) {
-                            handleLoginResponse(response)
+                            handleLoginResponse(response, username)
                         }
                     }
                 },
@@ -112,8 +113,20 @@ class LoginActivity : ComponentActivity() {
      * handle response from server after a login attempt
      * @param res response from server
      */
-    private fun handleLoginResponse(res: String) {
+    private fun handleLoginResponse(res: String, username: String) {
         if (res == "success") {
+            // store user in local storage
+            val filename = "user"
+            openFileOutput(filename, MODE_PRIVATE).use {
+                it.write(username.toByteArray())
+            }
+
+            // check username stored
+            // TODO: test
+            openFileInput(filename).bufferedReader().useLines { lines ->
+                Log.d("Login", "user=$lines")
+            }
+
             val intent = Intent(this, AppActivity::class.java)
             startActivity(intent)
         }
