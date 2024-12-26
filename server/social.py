@@ -6,7 +6,7 @@ from auth import DBManager
 def main():
     s = Social()
     print(s.add_connection(1, 2))
-    s.remove_connection(1, 2)
+    print(s.remove_connection(1, 2))
 
 
 class Social(DBManager):
@@ -36,20 +36,25 @@ class Social(DBManager):
         return True
 
     def remove_connection(self, remover: int, removed: int):
-        q = 'SELECT connections FROM users WHERE id = ?'
-        res = self.exec(q, remover)
+        try:
+            q = 'SELECT connections FROM users WHERE id = ?'
+            res = self.exec(q, remover)
 
-        friends: list = res[0][0].split(',')
-        friends.remove(str(removed))
+            friends: list = res[0][0].split(',')
+            friends.remove(str(removed))
 
-        connections = ','.join(friends)
+            connections = ','.join(friends)
 
-        # edge case
-        if connections == '':
-            connections = None
+            # edge case
+            if connections == '':
+                connections = None
 
-        q = 'UPDATE users SET connections = ? WHERE id = ?'
-        self.exec(q, connections, remover)
+            q = 'UPDATE users SET connections = ? WHERE id = ?'
+            self.exec(q, connections, remover)
+        except Exception as e:
+            print(e)
+            return False
+        return True
 
 
 if __name__ == '__main__':
