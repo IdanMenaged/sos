@@ -20,7 +20,7 @@ class Listener(private val context: Context) : ServerCommunicator() {
 
         Thread {
             while (true) {
-                sendNRecv("am_listener")  // todo: send user id with it
+                sendNRecv("am_listener 1")  // todo: get actual user id rather than this placeholder
                 val msg = receiveMessageFromServer()
                 if (msg != null) {
                     Log.d("Listener", msg)

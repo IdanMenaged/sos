@@ -33,8 +33,7 @@ class Server:
         """
         constructor
         """
-        # todo: listeners should be user_id: socket
-        self.listeners = {}  # ip: socket
+        self.listeners = {}  # user_id: socket
         self.auth = Auth()
         self.social = Social()
 
@@ -90,8 +89,13 @@ class Server:
 
         client_socket.close()
 
-        if addr[0] in self.listeners.keys():
-            self.listeners.pop(addr[0])
+        # if addr[0] in self.listeners.keys():
+        #     self.listeners.pop(addr[0])
+        for user_id, listener_sock in self.listeners.items():
+            if client_socket == listener_sock:
+                self.listeners.pop(user_id)
+                print(f'listener of user {user_id} has been terminated')
+                break
 
         return False
 
@@ -115,7 +119,8 @@ class Server:
             res = self.send_to(*params)
         # todo: change am_listener protocol to send user id with it
         elif cmd == 'am_listener':
-            self.listeners[addr[0]] = client_socket
+            self.listeners[params[0]] = client_socket
+            print(self.listeners)
             print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
         else:
