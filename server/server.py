@@ -33,6 +33,7 @@ class Server:
         """
         constructor
         """
+        # todo: listeners should be user_id: socket
         self.listeners = {}  # ip: socket
         self.auth = Auth()
         self.social = Social()
@@ -112,6 +113,7 @@ class Server:
             res = methods.Methods.history(addr)
         elif cmd == 'send_to':
             res = self.send_to(*params)
+        # todo: change am_listener protocol to send user id with it
         elif cmd == 'am_listener':
             self.listeners[addr[0]] = client_socket
             print(f"listener at {addr[0]}")
@@ -169,6 +171,7 @@ class Server:
 
             return 'message sent'
 
+    # todo: might need to change interface to use users instead
     def send_to(self, msg: str, *target_ips):
         """
         send a message to multiple ips
