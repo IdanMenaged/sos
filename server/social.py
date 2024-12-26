@@ -7,6 +7,7 @@ def main():
     s = Social()
     print(s.add_connection(1, 2))
     print(s.remove_connection(1, 2))
+    print(s.find_user_id("idan"))
 
 
 class Social(DBManager):
@@ -61,6 +62,22 @@ class Social(DBManager):
             print(e)
             return False
         return True
+
+    def find_user_id(self, name: str):
+        """
+        search user id using name
+        :param name: searched user's name
+        :return: search results
+        """
+        q = 'SELECT id FROM users WHERE name = ?'
+        res = self.exec(q, name)
+
+        # format res more neatly
+        out = []
+        for t in res:
+            out.append(t[0])
+
+        return out
 
 
 if __name__ == '__main__':
