@@ -160,7 +160,7 @@ class Server:
         """send a message to a certain connected client
 
         Args:
-            target_ip (str): ip of the connected client
+            user_id (str): user id of the connected client
             msg (str): message to send
 
         Returns:
@@ -179,7 +179,7 @@ class Server:
         """
         send a message to multiple ips
         :param msg: message to send
-        :param target_ips: ips to send to
+        :param user_ids: ids of users to send message to
         :return: msg detailing which ips were sent to and which failed
         """
         log = []
