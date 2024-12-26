@@ -36,6 +36,12 @@ class Social(DBManager):
         return True
 
     def remove_connection(self, remover: int, removed: int):
+        """
+        remove a connection from a user
+        :param remover: id of the removing user
+        :param removed: id of the removed user
+        :return: True if successful, False if not.
+        """
         try:
             q = 'SELECT connections FROM users WHERE id = ?'
             res = self.exec(q, remover)
