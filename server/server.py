@@ -37,6 +37,8 @@ class Server:
         self.auth = Auth()
         self.social = Social()
 
+        self.method_sources = {self.auth, self.social, methods.Methods}
+
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.bind((ip, port))
@@ -115,19 +117,23 @@ class Server:
             print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
         else:
-            try:
-                res = getattr(methods.Methods, cmd)(*params)
-            except:
+            # todo: add auth and social functions to constants.py
+
+            # try all the other method sources available until one succeeds
+            res = None
+            for source in self.method_sources:
                 try:
-                    res = getattr(self.social, cmd)(*params)
+                    res = getattr(source, cmd)(*params)
+                    break
                 except:
-                    try:
-                        res = getattr(self.auth, cmd)(*params)
-                    except:
-                        if cmd in BIN_METHODS:
-                            res = b'illegal command'
-                        else:
-                            res = 'illegal command'
+                    continue
+
+            # if none of the sources worked, return 'illegal command'
+            if res is None:
+                if cmd in BIN_METHODS:
+                    res = b'illegal command'
+                else:
+                    res = 'illegal command'
 
         return res
 
