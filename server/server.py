@@ -11,6 +11,7 @@ import methods
 import threading
 
 from auth import Auth
+from social import Social
 
 IP = '0.0.0.0'
 SIM_USERS = 1
@@ -34,6 +35,7 @@ class Server:
         """
         self.listeners = {}  # ip: socket
         self.auth = Auth()
+        self.social = Social()
 
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -112,21 +114,20 @@ class Server:
             self.listeners[addr[0]] = client_socket
             print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
-        # todo: use getattr for auth functions
-        elif cmd == 'login':
-            res = self.auth.login(*params)
-        # todo: test
-        elif cmd == 'signup':
-            res = self.auth.signup(*params)
-        # TODO: add social funcs
         else:
             try:
                 res = getattr(methods.Methods, cmd)(*params)
             except:
-                if cmd in BIN_METHODS:
-                    res = b'illegal command'
-                else:
-                    res = 'illegal command'
+                try:
+                    res = getattr(self.social, cmd)(*params)
+                except:
+                    try:
+                        res = getattr(self.auth, cmd)(*params)
+                    except:
+                        if cmd in BIN_METHODS:
+                            res = b'illegal command'
+                        else:
+                            res = 'illegal command'
 
         return res
 

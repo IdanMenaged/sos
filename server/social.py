@@ -33,8 +33,8 @@ class Social(DBManager):
             self.exec(q, connections, befriender)
         except Exception as e:
             print(e)
-            return False
-        return True
+            return 'False'
+        return 'True'
 
     def remove_connection(self, remover: int, removed: int):
         """
@@ -60,8 +60,8 @@ class Social(DBManager):
             self.exec(q, connections, remover)
         except Exception as e:
             print(e)
-            return False
-        return True
+            return 'False'
+        return 'True'
 
     def find_user_id(self, name: str):
         """
@@ -77,7 +77,7 @@ class Social(DBManager):
         for t in res:
             out.append(t[0])
 
-        return out
+        return str(out)
 
 
 if __name__ == '__main__':
