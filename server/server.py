@@ -89,8 +89,6 @@ class Server:
 
         client_socket.close()
 
-        # if addr[0] in self.listeners.keys():
-        #     self.listeners.pop(addr[0])
         for user_id, listener_sock in self.listeners.items():
             if client_socket == listener_sock:
                 self.listeners.pop(user_id)
@@ -158,7 +156,7 @@ class Server:
         importlib.reload(sys.modules['methods'])
         return 'module reloaded'
 
-    def send_to_single(self, target_ip, msg):
+    def send_to_single(self, user_id, msg):
         """send a message to a certain connected client
 
         Args:
@@ -168,16 +166,16 @@ class Server:
         Returns:
             str: message to send back to the sending client
         """
-        if target_ip not in self.listeners.keys():
-            return f'client {target_ip} does not have a listener connection'
+        if user_id not in self.listeners.keys():
+            return f'client {user_id} does not have a listener connection'
         else:
-            target_socket = self.listeners[target_ip]
+            target_socket = self.listeners[user_id]
             Protocol.send(target_socket, msg)
 
             return 'message sent'
 
-    # todo: might need to change interface to use users instead
-    def send_to(self, msg: str, *target_ips):
+    # todo: test with actual listener
+    def send_to(self, msg: str, *user_ids):
         """
         send a message to multiple ips
         :param msg: message to send
@@ -185,9 +183,9 @@ class Server:
         :return: msg detailing which ips were sent to and which failed
         """
         log = []
-        for ip in target_ips:
-            res = self.send_to_single(target_ip=ip, msg=msg)
-            log.append(f'{ip}: {res}')
+        for id in user_ids:
+            res = self.send_to_single(user_id=id, msg=msg)
+            log.append(f'{id}: {res}')
         return "\n".join(log)
 
 if __name__ == '__main__':
