@@ -24,7 +24,9 @@ class Social(DBManager):
             if connections is None:
                 connections = befriended
             else:
-                connections += f',{befriended}'  # TODO: handle duplicate ids
+                connections = set(connections.split(','))
+                connections.add(str(befriended))
+                connections = ','.join(connections)
 
             q = 'UPDATE users SET connections = ? WHERE id = ?'
             self.exec(q, connections, befriender)
