@@ -45,7 +45,7 @@ class ListenerService: Service() {
         startForeground(1, notification)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val listener = Listener()
+            val listener = Listener(this@ListenerService)
         }
 
 

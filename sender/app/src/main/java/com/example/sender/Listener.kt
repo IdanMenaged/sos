@@ -20,7 +20,7 @@ class Listener(private val context: Context) : ServerCommunicator() {
 
         Thread {
             while (true) {
-                // todo: how do i make sure clients can send someone else's id?
+                // todo: how do i make sure clients can't send someone else's id?
                 sendNRecv("am_listener 1")  // todo: get actual user id rather than this placeholder
                 val msg = receiveMessageFromServer()
                 if (msg != null) {
