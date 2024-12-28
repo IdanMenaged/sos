@@ -122,10 +122,11 @@ class LoginActivity : ComponentActivity() {
             }
 
             // check username stored
-            openFileInput(filename).bufferedReader().useLines { lines ->
-                val username = lines.first()
-                Log.d("Login", "user=$username")
-            }
+            // un-comment for testing
+//            openFileInput(filename).bufferedReader().useLines { lines ->
+//                val username = lines.first()
+//                Log.d("Login", "user=$username")
+//            }
 
             val intent = Intent(this, AppActivity::class.java)
             startActivity(intent)
