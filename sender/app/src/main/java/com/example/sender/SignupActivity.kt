@@ -2,21 +2,16 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +31,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class LoginActivity : ComponentActivity() {
+class SignupActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -47,7 +42,7 @@ class LoginActivity : ComponentActivity() {
                     contentAlignment = Alignment.Center
                 ) {
                     // content here
-                    LoginForm()
+                    SignupForm()
                 }
             }
         }
@@ -56,10 +51,12 @@ class LoginActivity : ComponentActivity() {
     }
 
     @Composable
-    fun LoginForm() {
+    fun SignupForm() {
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var isLoading by remember { mutableStateOf(false) }
+
+        // todo: big text that reads "Signup" and one with "Login" on the login activity
 
         Column(
             modifier = Modifier
@@ -86,52 +83,28 @@ class LoginActivity : ComponentActivity() {
                     .padding(bottom = 16.dp)
             )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Submit Button
-                Button(
-                    onClick = {
-                        isLoading = true
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val serverCommunicator = ServerCommunicator()
-                            val serverCommand = "login $username $password"
-                            val response =
-                                serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
-                            serverCommunicator.closeConnection()
-                            isLoading = false
+            // Submit Button
+            Button(
+                onClick = {
+                    isLoading = true
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val serverCommunicator = ServerCommunicator()
+                        val serverCommand = "signup $username $password"
+                        val response = serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
+                        serverCommunicator.closeConnection()
+                        isLoading = false
 
-                            if (response != null) {
-                                handleLoginResponse(response, username)
-                            }
+                        if (response != null) {
+                            handleResponse(response, username)
                         }
-                    },
-                    enabled = !isLoading
-                ) {
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = Color.White
-                        )
-                    } else {
-                        Text("Submit")
                     }
-                }
-
-                Spacer(modifier = Modifier.width(16.dp)) // Add spacing between buttons
-
-                // Link/Button to Navigate
-                Button(
-                    onClick = {
-                        val intent = Intent(this@LoginActivity, SignupActivity::class.java)
-                        startActivity(intent)
-                    },
-                ) {
-                    Text("Don't have an account?")
+                },
+                enabled = !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
+                } else {
+                    Text("Submit")
                 }
             }
         }
@@ -141,28 +114,16 @@ class LoginActivity : ComponentActivity() {
      * handle response from server after a login attempt
      * @param res response from server
      */
-    private fun handleLoginResponse(res: String, username: String) {
+    private fun handleResponse(res: String, username: String) {
+        // todo: redirect to login on success, toast notif on fail
         if (res == "success") {
-            // store user in local storage
-            val filename = "user"
-            openFileOutput(filename, MODE_PRIVATE).use {
-                it.write(username.toByteArray())
-            }
-
-            // check username stored
-            // un-comment for testing
-//            openFileInput(filename).bufferedReader().useLines { lines ->
-//                val username = lines.first()
-//                Log.d("Login", "user=$username")
-//            }
-
             val intent = Intent(this, AppActivity::class.java)
             startActivity(intent)
         }
         else {
             runOnUiThread() {
                 Toast.makeText(
-                    this, "Login failed!",
+                    this, "Signup failed!",
                     Toast.LENGTH_SHORT
                 ).show()
             }
