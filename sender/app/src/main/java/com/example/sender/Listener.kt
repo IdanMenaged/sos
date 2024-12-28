@@ -12,7 +12,7 @@ import android.widget.Toast
  * A class that listens to messages from the server on a different socket and thread than the one
  * sending messages. Responsible for receiving the SOS messages of others.
  */
-// TODO: test notification
+// TODO: make notification work
 class Listener(private val context: Context) : ServerCommunicator() {
 
     init {

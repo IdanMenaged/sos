@@ -115,7 +115,6 @@ class Server:
             res = methods.Methods.history(addr)
         elif cmd == 'send_to':
             res = self.send_to(*params)
-        # todo: change am_listener protocol to send user id with it
         elif cmd == 'am_listener':
             self.listeners[params[0]] = client_socket
             print(self.listeners)
