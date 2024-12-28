@@ -58,8 +58,12 @@ class AppActivity : ComponentActivity() {
         Button(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
                 val serverCommunicator = ServerCommunicator()
-                // change ip based on testing env
-                serverCommunicator.sendNRecv("send_to sos 10.20.72.33")
+                var username = ""
+                openFileInput("user").bufferedReader().useLines { lines ->
+                    username = lines.first()
+                }
+                // todo: send to all connections rather than to self
+                serverCommunicator.sendNRecv("send_to sos $username")
 
                 serverCommunicator.closeConnection()
             }
