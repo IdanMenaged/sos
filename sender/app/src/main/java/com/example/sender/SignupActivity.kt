@@ -6,12 +6,16 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -96,33 +100,56 @@ class SignupActivity : ComponentActivity() {
                     .padding(bottom = 16.dp)
             )
 
-            // Submit Button
-            Button(
-                onClick = {
-                    isLoading = true
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val serverCommunicator = ServerCommunicator()
-                        val serverCommand = "signup $username $password"
-                        val response = serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
-                        serverCommunicator.closeConnection()
-                        isLoading = false
-
-                        if (response != null) {
-                            handleResponse(response, username)
-                        }
-                    }
-                },
-                enabled = !isLoading
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
-                } else {
-                    Text("Submit")
+                // Submit Button
+                Button(
+                    onClick = {
+                        isLoading = true
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val serverCommunicator = ServerCommunicator()
+                            val serverCommand = "signup $username $password"
+                            val response =
+                                serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
+                            serverCommunicator.closeConnection()
+                            isLoading = false
+
+                            if (response != null) {
+                                handleResponse(response, username)
+                            }
+                        }
+                    },
+                    enabled = !isLoading
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text("Submit")
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(16.dp)) // Add spacing between buttons
+
+                // Link/Button to Navigate
+                Button(
+                    onClick = {
+                        val intent = Intent(this@SignupActivity,
+                            LoginActivity::class.java)
+                        startActivity(intent)
+                    },
+                ) {
+                    Text("Already have an account?")
                 }
             }
         }
-
-        // todo: add login redirection button
     }
 
     /**
