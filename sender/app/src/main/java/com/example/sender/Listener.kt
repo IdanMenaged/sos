@@ -16,12 +16,17 @@ import android.widget.Toast
 class Listener(private val context: Context) : ServerCommunicator() {
 
     init {
+        var username = ""
+            context.openFileInput("user").bufferedReader().useLines { lines ->
+            username = lines.first()
+        }
+
         val handler = Handler(Looper.getMainLooper())  // Handler for main thread
 
         Thread {
             while (true) {
                 // todo: how do i make sure clients can't send someone else's id?
-                sendNRecv("am_listener 1")  // todo: get actual user id rather than this placeholder
+                sendNRecv("am_listener $username")
                 val msg = receiveMessageFromServer()
                 if (msg != null) {
                     Log.d("Listener", msg)
