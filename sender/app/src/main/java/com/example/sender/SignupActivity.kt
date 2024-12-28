@@ -26,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,13 +57,25 @@ class SignupActivity : ComponentActivity() {
         var password by remember { mutableStateOf("") }
         var isLoading by remember { mutableStateOf(false) }
 
-        // todo: big text that reads "Signup" and one with "Login" on the login activity
-
         Column(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
+            // Big title at the top
+            Text(
+                text = "Sign Up",
+                style = androidx.compose.ui.text.TextStyle(
+                    fontSize = 32.sp, // Set the font size to make it big
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    color = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp), // Add space below the title
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+
             // First TextField
             TextField(
                 value = username,
@@ -108,6 +121,8 @@ class SignupActivity : ComponentActivity() {
                 }
             }
         }
+
+        // todo: add login redirection button
     }
 
     /**
