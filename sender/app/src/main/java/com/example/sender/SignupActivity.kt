@@ -157,9 +157,8 @@ class SignupActivity : ComponentActivity() {
      * @param res response from server
      */
     private fun handleResponse(res: String, username: String) {
-        // todo: redirect to login on success, toast notif on fail
         if (res == "success") {
-            val intent = Intent(this, AppActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
         else {
