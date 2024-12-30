@@ -173,7 +173,6 @@ class Server:
 
             return 'message sent'
 
-    # todo: test with actual listener
     def send_to(self, msg: str, *user_ids):
         """
         send a message to multiple ips
