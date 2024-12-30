@@ -118,7 +118,8 @@ class ProfileActivity : ComponentActivity() {
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete connection"
+                                contentDescription = "Delete connection",
+                                tint = Color.White
                             )
                         }
                     }
