@@ -164,7 +164,7 @@ class SignupActivity : ComponentActivity() {
         else {
             runOnUiThread() {
                 Toast.makeText(
-                    this, "Signup failed!",
+                    this, "Signup failed! perhaps the username is already taken?",
                     Toast.LENGTH_SHORT
                 ).show()
             }

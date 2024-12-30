@@ -40,8 +40,7 @@ class DBManager:
         """
         query = """
             CREATE TABLE IF NOT EXISTS Users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
+                name TEXT PRIMARY KEY,
                 password TEXT NOT NULL,
                 connections TEXT
             )
