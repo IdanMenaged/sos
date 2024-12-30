@@ -50,7 +50,7 @@ class AppActivity : ComponentActivity() {
                     // Profile button in top-right corner
                     IconButton(
                         onClick = {
-                            startActivity(Intent(this@AppActivity, AppActivity::class.java))
+                            startActivity(Intent(this@AppActivity, ProfileActivity::class.java))
                         },
                         modifier = Modifier
                             .align(Alignment.TopEnd)
