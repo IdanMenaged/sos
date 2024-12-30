@@ -89,7 +89,7 @@ class Server:
 
         client_socket.close()
 
-        # todo: fix removing disconnected client
+        # todo: fix removing disconnected client, prob cuz of the way services don't terminate
         for user_id, listener_sock in self.listeners.items():
             if client_socket == listener_sock:
                 self.listeners.pop(user_id)
