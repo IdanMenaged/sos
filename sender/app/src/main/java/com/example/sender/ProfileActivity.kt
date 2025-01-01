@@ -82,13 +82,10 @@ class ProfileActivity : ComponentActivity() {
         // non ui code
     }
 
-    /**
-     * a form that lets you change password and connections
-     */
     @Composable
     fun ProfileForm() {
         var password by remember { mutableStateOf("") }
-        var connections by remember { mutableStateOf(mutableListOf("Connection 1", "Connection 2")) }
+        var connections by remember { mutableStateOf(listOf("Connection 1", "Connection 2")) }
         var newConnectionName by remember { mutableStateOf("") }
 
         Column(
@@ -97,7 +94,8 @@ class ProfileActivity : ComponentActivity() {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Profile Settings",
+            Text(
+                "Profile Settings",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White
             )
@@ -112,7 +110,8 @@ class ProfileActivity : ComponentActivity() {
             )
 
             // Connections list
-            Text("Connections",
+            Text(
+                "Connections",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color.White
             )
@@ -126,12 +125,13 @@ class ProfileActivity : ComponentActivity() {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = connection,
+                        Text(
+                            text = connection,
                             modifier = Modifier.weight(1f),
                             color = Color.White
                         )
                         IconButton(onClick = {
-                            connections.remove(connection)
+                            connections = connections.toMutableList().apply { remove(connection) }
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
@@ -150,10 +150,12 @@ class ProfileActivity : ComponentActivity() {
                 label = { Text("New Connection") },
                 modifier = Modifier.fillMaxWidth()
             )
+            // todo: should search db for names and suggest accordingly.
+            // todo: it should only be possible to add existing users
             Button(
                 onClick = {
                     if (newConnectionName.isNotBlank()) {
-                        connections.add(newConnectionName)
+                        connections = connections + newConnectionName
                         newConnectionName = ""
                     }
                 },
@@ -174,4 +176,5 @@ class ProfileActivity : ComponentActivity() {
             }
         }
     }
+
 }
