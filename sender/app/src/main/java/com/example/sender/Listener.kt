@@ -24,7 +24,7 @@ class Listener(private val context: Context) : ServerCommunicator() {
 
         Thread {
             while (true) {
-                // todo: how do i make sure clients can't send someone else's id?
+                // todo: use tokens rather than username (maybe)
                 sendNRecv("am_listener $username")
                 val msg = receiveMessageFromServer()
                 if (msg != null) {

@@ -5,6 +5,7 @@
 
 package com.example.sender
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -57,7 +58,23 @@ class ProfileActivity : ComponentActivity() {
                     contentAlignment = Alignment.Center
                 ) {
                     ProfileForm()
-                    // todo: add button to go back to app activity
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp), // Adjust padding as needed
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    Button(
+                        onClick = {
+                            startActivity(
+                                Intent(this@ProfileActivity, AppActivity::class.java)
+                            )
+                        }
+                    ) {
+                        Text("Go Back")
+                    }
                 }
             }
         }
