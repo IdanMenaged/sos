@@ -7,6 +7,7 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -93,8 +94,14 @@ class AppActivity : ComponentActivity() {
                 openFileInput("user").bufferedReader().useLines { lines ->
                     username = lines.first()
                 }
-                // todo: send to all connections rather than to self
-                serverCommunicator.sendNRecv("send_to sos $username")
+
+                val connections = serverCommunicator.sendNRecv("get_connections $username")
+                val formattedConnections = connections?.replace(",", " ")
+                if (formattedConnections != null) {
+                    Log.d("SOS btn", formattedConnections)
+                }
+
+                serverCommunicator.sendNRecv("send_to sos $username $formattedConnections")
 
                 serverCommunicator.closeConnection()
             }
