@@ -54,8 +54,6 @@ class Server:
         while True:
             client_socket, addr = self.sock.accept()
 
-            methods.Methods.new_hist(addr)
-
             clnt_thread = threading.Thread(target=self.handle_client,
                                            args=(client_socket, addr))
             clnt_thread.start()
@@ -69,7 +67,6 @@ class Server:
         while True:
             try:
                 req = Protocol.receive(client_socket).lower()
-                methods.Methods.add_to_hist(addr, req)
 
                 res = self.handle_req(client_socket, req, addr)
 
