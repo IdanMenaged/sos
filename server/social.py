@@ -35,33 +35,6 @@ class Social(DBManager):
             return 'False'
         return 'True'
 
-    def remove_connection(self, remover: int, removed: int):
-        """
-        remove a connection from a user
-        :param remover: id of the removing user
-        :param removed: id of the removed user
-        :return: True if successful, False if not.
-        """
-        try:
-            q = 'SELECT connections FROM users WHERE id = ?'
-            res = self.exec(q, remover)
-
-            friends = res[0][0].split(',')
-            friends.remove(str(removed))
-
-            connections = ','.join(friends)
-
-            # edge case
-            if connections == '':
-                connections = None
-
-            q = 'UPDATE users SET connections = ? WHERE id = ?'
-            self.exec(q, connections, remover)
-        except Exception as e:
-            print(e)
-            return 'False'
-        return 'True'
-
     def get_connections(self, name: str):
         """
         get all connections
