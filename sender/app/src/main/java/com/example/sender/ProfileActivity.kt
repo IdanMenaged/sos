@@ -181,7 +181,10 @@ class ProfileActivity : ComponentActivity() {
     }
 
     private fun saveProfileSettings(connections: List<String>) {
-        val formattedConnections = connections.joinToString(",")
+        var formattedConnections = connections.joinToString(",")
+        if (formattedConnections == "") {
+            formattedConnections = "NULL"
+        }
 
         var username = ""
         openFileInput("user").bufferedReader().useLines { lines ->
