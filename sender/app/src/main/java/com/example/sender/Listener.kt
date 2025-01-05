@@ -37,7 +37,6 @@ class Listener(private val context: Context) : ServerCommunicator() {
 
         Thread {
             while (true) {
-                // TODO: Use tokens rather than username (maybe)
                 sendNRecv("am_listener $username")
                 val msg = receiveMessageFromServer()
                 if (msg != null) {

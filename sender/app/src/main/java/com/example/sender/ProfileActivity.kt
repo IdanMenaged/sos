@@ -150,8 +150,6 @@ class ProfileActivity : ComponentActivity() {
                 label = { Text("New Connection") },
                 modifier = Modifier.fillMaxWidth()
             )
-            // todo: should search db for names and suggest accordingly.
-            // todo: it should only be possible to add existing users
             Button(
                 onClick = {
                     if (newConnectionName.isNotBlank()) {

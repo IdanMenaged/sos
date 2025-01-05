@@ -11,7 +11,6 @@ def main():
 
 
 class Social(DBManager):
-    # todo: remove all id usage
     def add_connection(self, befriender: str, befriended: str):
         """
         add the befriended name to the befriender's connections field

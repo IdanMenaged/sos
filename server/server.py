@@ -108,7 +108,6 @@ class Server:
         cmd, *params = req.split()
 
         # special exceptions
-        # todo: make match case
         if cmd == 'reload':
             res = Server.handle_reload(client_socket)
         elif cmd == 'history':
@@ -121,8 +120,6 @@ class Server:
             print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
         else:
-            # todo: add auth and social functions to constants.py
-
             # try all the other method sources available until one succeeds
             res = None
             for source in self.method_sources:
