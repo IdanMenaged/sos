@@ -7,7 +7,6 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -95,6 +94,9 @@ class ProfileActivity : ComponentActivity() {
 
         LaunchedEffect(Unit) { // Runs when the composable is first composed
             connections = getConnections()
+            if (connections == listOf("null")) {
+                connections = emptyList()
+            }
         }
 
         Column(
