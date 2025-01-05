@@ -7,6 +7,7 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -29,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +38,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.sender.ui.theme.SenderTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -84,9 +89,12 @@ class ProfileActivity : ComponentActivity() {
 
     @Composable
     fun ProfileForm() {
-        var password by remember { mutableStateOf("") }
-        var connections by remember { mutableStateOf(listOf("Connection 1", "Connection 2")) }
+        var connections by remember { mutableStateOf<List<String>>(emptyList()) }
         var newConnectionName by remember { mutableStateOf("") }
+
+        LaunchedEffect(Unit) { // Runs when the composable is first composed
+            connections = getConnections()
+        }
 
         Column(
             modifier = Modifier
@@ -96,17 +104,8 @@ class ProfileActivity : ComponentActivity() {
         ) {
             Text(
                 "Profile Settings",
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
                 color = Color.White
-            )
-
-            // Password field
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("New Password") },
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
             )
 
             // Connections list
@@ -168,12 +167,30 @@ class ProfileActivity : ComponentActivity() {
             Button(
                 onClick = {
                     // Handle saving password and connections
-                    //saveProfileSettings(password, connections)
+                    //saveProfileSettings(connections)
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Changes")
             }
+        }
+    }
+
+    private suspend fun getConnections(): List<String> {
+        return withContext(Dispatchers.IO) { // Run this block on the IO dispatcher
+            var username = ""
+            openFileInput("user").bufferedReader().useLines { lines ->
+                username = lines.first()
+            }
+
+            val comm = ServerCommunicator()
+            val connections = comm.sendNRecv("get_connections $username")
+            if (connections != null) {
+                Log.d("ProfileSettings", connections)
+            } else {
+                Log.d("ProfileSettings", "null")
+            }
+            connections?.split(",") ?: emptyList()
         }
     }
 

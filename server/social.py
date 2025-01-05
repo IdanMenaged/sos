@@ -5,21 +5,22 @@ from auth import DBManager
 
 def main():
     s = Social()
-    print(s.add_connection(1, 2))
-    print(s.remove_connection(1, 2))
-    print(s.find_user_id("idan"))
+    print(s.add_connection("idan", "ayelet"))
+    #print(s.remove_connection(1, 2))
+    print(s.get_connections("idan"))
 
 
 class Social(DBManager):
-    def add_connection(self, befriender: int, befriended: int):
+    # todo: remove all id usage
+    def add_connection(self, befriender: str, befriended: str):
         """
-        add the befriended id to the befriender's connections field
-        :param befriender: id of the befriender
-        :param befriended: id of the befriended
+        add the befriended name to the befriender's connections field
+        :param befriender: name of the befriender
+        :param befriended: name of the befriended
         :return true on success, false on failure
         """
         try:
-            q = f'SELECT connections FROM users WHERE id = ?'
+            q = f'SELECT connections FROM users WHERE name = ?'
             res = self.exec(q, befriender)
             connections = res[0][0]
             if connections is None:
@@ -29,7 +30,7 @@ class Social(DBManager):
                 connections.add(str(befriended))
                 connections = ','.join(connections)
 
-            q = 'UPDATE users SET connections = ? WHERE id = ?'
+            q = 'UPDATE users SET connections = ? WHERE name = ?'
             self.exec(q, connections, befriender)
         except Exception as e:
             print(e)
@@ -63,21 +64,15 @@ class Social(DBManager):
             return 'False'
         return 'True'
 
-    def find_user_id(self, name: str):
+    def get_connections(self, name: str):
         """
-        search user id using name
-        :param name: searched user's name
-        :return: search results
+        get all connections
+        :param name: username
+        :return: comma separated list of names
         """
-        q = 'SELECT id FROM users WHERE name = ?'
+        q = 'SELECT connections FROM users WHERE name = ?'
         res = self.exec(q, name)
-
-        # format res more neatly
-        out = []
-        for t in res:
-            out.append(t[0])
-
-        return str(out)
+        return res[0][0] if res[0][0] is not None else ""
 
 
 if __name__ == '__main__':

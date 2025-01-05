@@ -24,5 +24,6 @@ PARAM_COUNTS = {
     'send_to': -1,
     'login': 2,
     'add_connection': 2,
+    'get_connections': 1,
     'am_listener': 1,
 }
