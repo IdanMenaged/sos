@@ -108,11 +108,7 @@ class Server:
         cmd, *params = req.split()
 
         # special exceptions
-        if cmd == 'reload':
-            res = Server.handle_reload(client_socket)
-        elif cmd == 'history':
-            res = methods.Methods.history(addr)
-        elif cmd == 'send_to':
+        if cmd == 'send_to':
             res = self.send_to(*params)
         elif cmd == 'am_listener':
             self.listeners[params[0]] = client_socket
@@ -137,20 +133,6 @@ class Server:
                     res = 'illegal command'
 
         return res
-
-    @staticmethod
-    def handle_reload(sock):
-        """
-        to be called on the server after a reload
-        saves the new data into 'methods.py' and re-imports
-        :return: response to send back
-        """
-        Protocol.send(sock, 'ready for reload')
-        data = Protocol.receive_bin(sock)
-        methods.Methods.save_to_file(METHODS_PATH, data)
-
-        importlib.reload(sys.modules['methods'])
-        return 'module reloaded'
 
     def send_to_single(self, user_id, msg):
         """send a message to a certain connected client
