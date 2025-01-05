@@ -59,6 +59,9 @@ class DBManager:
         if not DBManager.valid_query(q):
             raise Exception(f'query "{q}" is invalid. risk of sql injection')
 
+        # make it possible to insert null values
+        params = tuple(None if param == 'NULL' else param for param in params)
+
         self.cursor.execute(q, params)
         self.conn.commit()
         return self.cursor.fetchall()
