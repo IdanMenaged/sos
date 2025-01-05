@@ -1,3 +1,7 @@
+/**
+ * Idan Menaged
+ */
+
 package com.example.sender
 
 import android.annotation.SuppressLint
@@ -14,11 +18,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * service to run the Listener class
+ */
 class ListenerService: Service() {
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
 
+    /**
+     * start the listener and notify the user
+     */
     @SuppressLint("NewApi")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(
@@ -52,6 +62,9 @@ class ListenerService: Service() {
         return START_STICKY
     }
 
+    /**
+     * notify the user on service destruction
+     */
     override fun onDestroy() {
         Toast.makeText(
             applicationContext, "Service execution completed",
