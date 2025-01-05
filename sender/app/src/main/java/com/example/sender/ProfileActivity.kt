@@ -8,6 +8,7 @@ package com.example.sender
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -167,13 +168,29 @@ class ProfileActivity : ComponentActivity() {
             Button(
                 onClick = {
                     // Handle saving password and connections
-                    //saveProfileSettings(connections)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        saveProfileSettings(connections)
+                    }
+                    Toast.makeText(this@ProfileActivity, "connections updated", Toast.LENGTH_SHORT).show()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save Changes")
             }
         }
+    }
+
+    private fun saveProfileSettings(connections: List<String>) {
+        val formattedConnections = connections.joinToString(",")
+
+        var username = ""
+        openFileInput("user").bufferedReader().useLines { lines ->
+            username = lines.first()
+        }
+
+        val comm = ServerCommunicator()
+        comm.sendNRecv("update_connections $username $formattedConnections")
+        comm.closeConnection()
     }
 
     private suspend fun getConnections(): List<String> {
@@ -185,11 +202,8 @@ class ProfileActivity : ComponentActivity() {
 
             val comm = ServerCommunicator()
             val connections = comm.sendNRecv("get_connections $username")
-            if (connections != null) {
-                Log.d("ProfileSettings", connections)
-            } else {
-                Log.d("ProfileSettings", "null")
-            }
+            comm.closeConnection()
+
             connections?.split(",") ?: emptyList()
         }
     }
