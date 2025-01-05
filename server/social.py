@@ -6,7 +6,6 @@ from auth import DBManager
 def main():
     s = Social()
     print(s.add_connection("idan", "ayelet"))
-    #print(s.remove_connection(1, 2))
     print(s.get_connections("idan"))
 
 
@@ -47,7 +46,7 @@ class Social(DBManager):
             q = 'SELECT connections FROM users WHERE id = ?'
             res = self.exec(q, remover)
 
-            friends: list = res[0][0].split(',')
+            friends = res[0][0].split(',')
             friends.remove(str(removed))
 
             connections = ','.join(friends)
