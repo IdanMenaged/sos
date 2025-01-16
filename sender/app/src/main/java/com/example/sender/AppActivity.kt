@@ -5,6 +5,7 @@
 
 package com.example.sender
 
+import Geolocation
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -87,23 +88,25 @@ class AppActivity : ComponentActivity() {
      */
     @Composable
     fun SosButton() {
+        val geo = Geolocation(this)
         Button(onClick = {
             CoroutineScope(Dispatchers.IO).launch {
-                val serverCommunicator = ServerCommunicator()
-                var username = ""
-                openFileInput("user").bufferedReader().useLines { lines ->
-                    username = lines.first()
-                }
-
-                val connections = serverCommunicator.sendNRecv("get_connections $username")
-                val formattedConnections = connections?.replace(",", " ")
-                if (formattedConnections != null) {
-                    Log.d("SOS btn", formattedConnections)
-                }
-
-                serverCommunicator.sendNRecv("send_to sos $username $formattedConnections")
-
-                serverCommunicator.closeConnection()
+//                val serverCommunicator = ServerCommunicator()
+//                var username = ""
+//                openFileInput("user").bufferedReader().useLines { lines ->
+//                    username = lines.first()
+//                }
+//
+//                val connections = serverCommunicator.sendNRecv("get_connections $username")
+//                val formattedConnections = connections?.replace(",", " ")
+//                if (formattedConnections != null) {
+//                    Log.d("SOS btn", formattedConnections)
+//                }
+//
+//                serverCommunicator.sendNRecv("send_to sos $username $formattedConnections")
+//
+//                serverCommunicator.closeConnection()
+                val loc = geo.getLocation()
             }
         }) {
             Text("SOS")
