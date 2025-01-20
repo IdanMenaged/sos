@@ -9,7 +9,6 @@ import Geolocation
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -90,24 +89,30 @@ class AppActivity : ComponentActivity() {
     fun SosButton() {
         val geo = Geolocation(this)
         Button(onClick = {
-//            CoroutineScope(Dispatchers.IO).launch {
-//                val serverCommunicator = ServerCommunicator()
-//                var username = ""
-//                openFileInput("user").bufferedReader().useLines { lines ->
-//                    username = lines.first()
-//                }
-//
-//                val connections = serverCommunicator.sendNRecv("get_connections $username")
-//                val formattedConnections = connections?.replace(",", " ")
-//                if (formattedConnections != null) {
-//                    Log.d("SOS btn", formattedConnections)
-//                }
-//
-//                serverCommunicator.sendNRecv("send_to sos $username $formattedConnections")
-//
-//                serverCommunicator.closeConnection()
-                val loc = geo.getLocation()
-//            }
+            val location = geo.getLocation()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val serverCommunicator = ServerCommunicator()
+                var username = ""
+                openFileInput("user").bufferedReader().useLines { lines ->
+                    username = lines.first()
+                }
+
+                val connections = serverCommunicator.sendNRecv("get_connections $username")
+                val formattedConnections = connections?.replace(",", " ")
+                if (formattedConnections != null) {
+                    Log.d("SOS btn", formattedConnections)
+                }
+
+                if (location != null) {
+                    serverCommunicator.sendNRecv(
+                        "send_to ${location.latitude},${location.longitude}" +
+                                " $username $formattedConnections"
+                    )
+                }
+
+                serverCommunicator.closeConnection()
+            }
         }) {
             Text("SOS")
         }
