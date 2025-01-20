@@ -90,7 +90,7 @@ class AppActivity : ComponentActivity() {
     fun SosButton() {
         val geo = Geolocation(this)
         Button(onClick = {
-            CoroutineScope(Dispatchers.IO).launch {
+//            CoroutineScope(Dispatchers.IO).launch {
 //                val serverCommunicator = ServerCommunicator()
 //                var username = ""
 //                openFileInput("user").bufferedReader().useLines { lines ->
@@ -107,7 +107,7 @@ class AppActivity : ComponentActivity() {
 //
 //                serverCommunicator.closeConnection()
                 val loc = geo.getLocation()
-            }
+//            }
         }) {
             Text("SOS")
         }

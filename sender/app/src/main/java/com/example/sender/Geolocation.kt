@@ -13,7 +13,7 @@ class Geolocation(private val context: Context) {
     private var locationByGps: Location? = null
     private var locationByNetwork: Location? = null
 
-    // todo: fix error: Unable to open libpenguin.so: dlopen failed: library "libpenguin.so" not found.
+    // todo: test on physical device
     @SuppressLint("MissingPermission")
     fun getLocation(): Location? {
         var currentLocation: Location? = null
