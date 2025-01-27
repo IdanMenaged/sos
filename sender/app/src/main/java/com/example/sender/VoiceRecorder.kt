@@ -1,5 +1,7 @@
-import android.app.Activity
-import android.app.Activity.RESULT_OK
+/**
+ * Idan Menaged
+ */
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -7,11 +9,13 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
-import androidx.core.app.ActivityCompat.startActivityForResult
 
 const val TAG = "VoiceRecorder" // logging tag
 
-class VoiceRecorder(private val context: Context): RecognitionListener {
+/**
+ * a class to handle speech recognition and recording
+ */
+class VoiceRecorder(context: Context): RecognitionListener {
     private val speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context)
     init {
         speechRecognizer.setRecognitionListener(this)
@@ -24,6 +28,10 @@ class VoiceRecorder(private val context: Context): RecognitionListener {
         speechRecognizer.startListening(recognizerIntent)
     }
 
+    /**
+     * Log methods
+     * log current state and changes
+     */
     override fun onReadyForSpeech(params: Bundle?) {
         Log.d(TAG, "onReadyForSpeech")
     }
@@ -57,6 +65,9 @@ class VoiceRecorder(private val context: Context): RecognitionListener {
         Log.d(TAG, "onError $error")
     }
 
+    /**
+     * log the result
+     */
     override fun onResults(results: Bundle?) {
         Log.d(TAG, "onReadyForSpeech")
         val result = results?.getStringArrayList("results_recognition")

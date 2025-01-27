@@ -78,9 +78,11 @@ class AppActivity : ComponentActivity() {
         }
 
         // start listener
+        // todo: rename listener to avoid confusion with speech recognition system
         val intent = Intent(this, ListenerService::class.java)
         startService(intent)
 
+        // TODO: listen continuously rather than once
         val voiceRecorder = VoiceRecorder(this)
     }
 
