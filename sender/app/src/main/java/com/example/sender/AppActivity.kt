@@ -82,8 +82,7 @@ class AppActivity : ComponentActivity() {
         val intent = Intent(this, ListenerService::class.java)
         startService(intent)
 
-        // TODO: listen continuously rather than once
-        val voiceRecorder = VoiceRecorder(this)
+
     }
 
 
@@ -118,6 +117,8 @@ class AppActivity : ComponentActivity() {
 
                 serverCommunicator.closeConnection()
             }
+            // TODO: listen continuously rather than on button press
+            //val voiceRecorder = VoiceRecorder(this)
         }) {
             Text("SOS")
         }
