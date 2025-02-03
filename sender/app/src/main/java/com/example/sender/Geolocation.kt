@@ -125,7 +125,7 @@ class Geolocation(context: Context) {
             // Sets the desired interval for
             // active location updates.
             // This interval is inexact.
-            interval = TimeUnit.SECONDS.toMillis(1) // todo: switch to a more reasonable interval
+            interval = TimeUnit.SECONDS.toMillis(1) // todo: maybe make interval even shorter
 
             // Sets the fastest rate for active location updates.
             // This interval is exact, and your application will never
@@ -145,7 +145,7 @@ class Geolocation(context: Context) {
                 super.onLocationResult(p0)
                 p0.lastLocation?.let { location ->
                     currentLocation = location
-                    // todo: make toast notif
+                    // todo: show app as loading until location is cached
                     Log.d(TAG, "location cached")
                 } ?: {
                     Log.d(TAG, "Location information isn't available.")
