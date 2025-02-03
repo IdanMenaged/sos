@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 
 
 @SuppressLint("MissingPermission")
-class Geolocation(context: Context) {
+class Geolocation(context: Context, private val onReady: () -> Unit) {
     private val TAG = "Geolocation"
 
     // todo: delete when gms definitely 100% works
@@ -146,8 +146,8 @@ class Geolocation(context: Context) {
                 super.onLocationResult(p0)
                 p0.lastLocation?.let { location ->
                     currentLocation = location
-                    // todo: show app as loading until location is cached
                     Log.d(TAG, "location cached")
+                    onReady()
                 } ?: {
                     Log.d(TAG, "Location information isn't available.")
                 }

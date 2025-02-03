@@ -20,11 +20,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -38,6 +44,8 @@ import kotlinx.coroutines.launch
  * Main activity for the app
  */
 class AppActivity : ComponentActivity() {
+    private lateinit var geo: Geolocation
+
     /**
      * defines the ui
      */
@@ -46,34 +54,7 @@ class AppActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SenderTheme {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    // Profile button in top-right corner
-                    IconButton(
-                        onClick = {
-                            startActivity(Intent(this@AppActivity, ProfileActivity::class.java))
-                        },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(16.dp)
-                            .size(56.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "User Profile",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    // Main SOS button remains centered
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        SosButton()
-                    }
-                }
+                MainScreen()
             }
         }
 
@@ -91,7 +72,6 @@ class AppActivity : ComponentActivity() {
      */
     @Composable
     fun SosButton() {
-        val geo = Geolocation(this)
         Button(onClick = {
             val location = geo.getLocation()
 
@@ -122,6 +102,66 @@ class AppActivity : ComponentActivity() {
             //val voiceRecorder = VoiceRecorder(this)
         }) {
             Text("SOS")
+        }
+    }
+
+    @Composable
+    fun MainScreen() {
+        var isGeolocationReady by remember { mutableStateOf(false) }
+
+        LaunchedEffect(Unit) {
+            geo = Geolocation(this@AppActivity) {
+                isGeolocationReady = true
+            }
+        }
+
+        if (!isGeolocationReady) {
+            LoadingScreen()
+        }
+        else {
+            MainContent()
+        }
+    }
+
+    @Composable
+    fun LoadingScreen() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
+    @Composable
+    fun MainContent() {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            // Profile button in top-right corner
+            IconButton(
+                onClick = {
+                    startActivity(Intent(this@AppActivity, ProfileActivity::class.java))
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(16.dp)
+                    .size(56.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "User Profile",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+
+            // Main SOS button remains centered
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                SosButton()
+            }
         }
     }
 }
