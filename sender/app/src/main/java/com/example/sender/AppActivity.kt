@@ -88,12 +88,8 @@ class AppActivity : ComponentActivity() {
                     Log.d("SOS btn", formattedConnections)
                 }
 
-                // deal with null location
-                val locationField = if (location == null) "no_location" else
-                    "${location.latitude},${location.longitude}"
-
                 serverCommunicator.sendNRecv(
-                    "send_to $username,$locationField $formattedConnections"
+                    "send_to $username,${location.latitude},${location.longitude} $formattedConnections"
                 )
 
                 serverCommunicator.closeConnection()

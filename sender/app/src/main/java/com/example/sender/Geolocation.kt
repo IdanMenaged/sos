@@ -158,13 +158,8 @@ class Geolocation(context: Context, private val onReady: () -> Unit) {
         )
     }
 
-    fun getLocation(): Location? {
-        if (currentLocation == null) {
-            Log.e(TAG, "error getting location")
-        }
-        else {
-            Log.d(TAG, "${currentLocation!!.latitude},${currentLocation!!.longitude}")
-        }
-        return currentLocation
+    fun getLocation(): Location {
+        Log.d(TAG, "${currentLocation!!.latitude},${currentLocation!!.longitude}")
+        return currentLocation as Location
     }
 }
