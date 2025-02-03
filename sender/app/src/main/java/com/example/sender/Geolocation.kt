@@ -21,12 +21,12 @@ import java.util.concurrent.TimeUnit
 class Geolocation(context: Context) {
     private val TAG = "Geolocation"
 
+    // todo: delete when gms definitely 100% works
     // using lolcation api
     /*
     private var locationByGps: Location? = null
     private var locationByNetwork: Location? = null
 
-    // todo: test on physical device
     @SuppressLint("MissingPermission")
     fun getLocation(): Location? {
         var currentLocation: Location? = null
@@ -102,6 +102,9 @@ class Geolocation(context: Context) {
     */
 
     // using fused location provider
+    // todo: why work only sometimes??
+    // todo: make service
+
     // FusedLocationProviderClient - Main class for receiving location updates.
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -122,17 +125,17 @@ class Geolocation(context: Context) {
             // Sets the desired interval for
             // active location updates.
             // This interval is inexact.
-            interval = TimeUnit.SECONDS.toMillis(60)
+            interval = TimeUnit.SECONDS.toMillis(1) // todo: switch to a more reasonable interval
 
             // Sets the fastest rate for active location updates.
             // This interval is exact, and your application will never
             // receive updates more frequently than this value
-            fastestInterval = TimeUnit.SECONDS.toMillis(30)
+            fastestInterval = TimeUnit.SECONDS.toMillis(1)
 
             // Sets the maximum time when batched location
             // updates are delivered. Updates may be
             // delivered sooner than this interval
-            maxWaitTime = TimeUnit.MINUTES.toMillis(2)
+            maxWaitTime = TimeUnit.SECONDS.toMillis(2)
 
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
@@ -142,7 +145,8 @@ class Geolocation(context: Context) {
                 super.onLocationResult(p0)
                 p0.lastLocation?.let { location ->
                     currentLocation = location
-                    Log.d(TAG, "${location.latitude},${location.longitude}")
+                    // todo: make toast notif
+                    Log.d(TAG, "location cached")
                 } ?: {
                     Log.d(TAG, "Location information isn't available.")
                 }
