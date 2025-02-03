@@ -5,9 +5,11 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -45,8 +47,18 @@ class Listener(private val context: Context) : ServerCommunicator() {
                     // Show push notification
                     // if not showing, check "show as pop up" is turned on in the notification
                     // settings
+                    val parsedMsg = parseMessage(msg)
+                    val sender = parsedMsg[0]
+                    val lat = parsedMsg[1]
+                    val lon = parsedMsg[2]
+
                     handler.post {
-                        sendNotification("New Message", msg)
+                        sendNotification(
+                            "SOS from $sender",
+                            "click here to see their location",
+                            lat,
+                            lon
+                        )
                     }
                 }
             }
@@ -68,17 +80,41 @@ class Listener(private val context: Context) : ServerCommunicator() {
         }
     }
 
+    // todo: open location when clicking
     @SuppressLint("MissingPermission")
-    private fun sendNotification(title: String, message: String) {
+    private fun sendNotification(title: String, message: String, lat: String, lon: String) {
+        // handle on click
+        val gmmIntentUri = Uri.parse("geo:$lat,$lon?q=$lat,$lon")
+        val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri).apply {
+            setPackage("com.google.android.apps.maps")
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            mapIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_info) // Replace with your app's icon
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
             .build()
 
         with(NotificationManagerCompat.from(context)) {
             notify(notificationId, notification)
         }
+    }
+
+    /**
+     * parse the message from the server
+     * @param msg msg received
+     * @return sender, latitude, longitude
+     */
+    private fun parseMessage(msg: String): List<String> {
+        return msg.split(',').map { it.trim() }
     }
 }
