@@ -125,6 +125,7 @@ class Geolocation(context: Context) {
             // Sets the desired interval for
             // active location updates.
             // This interval is inexact.
+            // todo: magic numbers
             interval = TimeUnit.SECONDS.toMillis(1) // todo: maybe make interval even shorter
 
             // Sets the fastest rate for active location updates.
