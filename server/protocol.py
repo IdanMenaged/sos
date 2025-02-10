@@ -3,129 +3,93 @@ Idan Menaged
 protocol for sending messages between server and client
 """
 
+import base64
 from my_aes import AESCipher
 
-MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its
-# len
+MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its length
 MAX_CHUNK_SIZE = 1024
-BIN_DONE = -1  # code to send when a binary is over
-MIN_CONTENT_LEN = 0
-MIN_LEN_RECEIVED = 0
-MIN_LEN_SENT = 0
-INITIAL_DATA = b''
-INITIAL_CHUNK_DATA = b''
+BIN_DONE = -1  # Code to send when a binary transfer is over
 
 
 class Protocol:
     """
-    communication protocol between server and client
+    Communication protocol between server and client
     """
-    @staticmethod
-    def add_prefix(content):
-        """
-        adds a prefix containing the length of the content
-        :param content: content
-        :return: content with the prefix
-        """
-        return str(len(content)).zfill(MSG_LEN_PADDING).encode() + content
 
     @staticmethod
     def send(conn, content):
+        """
+        Send an encrypted message over the socket with Base64 encoding.
+        :param conn: Tuple (socket, key)
+        :param content: String content to send
+        """
         socket, key = conn
-        """
-        :param conn: socket and key
-        :param content: string with the content to be sent
-        :return: None
-        """
-        content = content.encode()  # convert to bytes
-        content = AESCipher.encrypt(key, content)  # encrypt with aes
-        content = Protocol.add_prefix(content)
-
-        socket.send(content)
+        content_bytes = content.encode()  # Convert to bytes
+        encrypted = AESCipher.encrypt(key, content_bytes)  # Encrypt with AES
+        encoded = base64.b64encode(encrypted).decode()  # Base64 encode
+        socket.sendall((encoded + "\n").encode())  # Ensure newline termination
 
     @staticmethod
     def receive(conn):
         """
-        :param conn: socket and key
-        :return: stricontent_lenng with content
+        Receive an encrypted message over the socket and decode it.
+        :param conn: Tuple (socket, key)
+        :return: Decrypted string content
         """
         socket, key = conn
-        content_len = MIN_CONTENT_LEN
-        len_received = MIN_LEN_RECEIVED
-        while len_received < MSG_LEN_PADDING:
-            packet = socket.recv(MSG_LEN_PADDING - len_received)
-            len_received += len(packet)
-            content_len += int(packet.decode())
-
-        len_received = MIN_LEN_RECEIVED
-        content = ""
-        while len_received < content_len:
-            packet = socket.recv(content_len - len_received)
-            len_received += len(packet)
-            content += packet.decode()
-
-        # decrypt
-        content = AESCipher.decrypt(key, content)
-
-        return content
+        received_data = socket.makefile().readline().strip()  # Read one line
+        try:
+            decoded = base64.b64decode(received_data)  # Decode Base64
+            decrypted = AESCipher.decrypt(key, decoded)  # Decrypt AES
+            return decrypted.decode()
+        except base64.binascii.Error as e:
+            print(f"[ERROR] Base64 decoding failed: {e}")
+            return None
 
     @staticmethod
     def send_bin(conn, content):
         """
-        send binary data
-        :param conn: socket and key
-        :param content: content to send
+        Send binary data with Base64 encoding.
+        :param conn: Tuple (socket, key)
+        :param content: Binary content to send
         """
         socket, key = conn
-        len_sent = MIN_LEN_SENT
-        len_to_send = len(content)
-        while len_sent < len_to_send:
-            chunk_size = min(MAX_CHUNK_SIZE, len(content))  # sometimes the
-            # content is not perfectly divisible by
+        while content:
+            chunk = content[:MAX_CHUNK_SIZE]
+            content = content[MAX_CHUNK_SIZE:]
 
-            # MAX_CHUNK_SIZE
-            chunk = content[:chunk_size]
-            content = content[chunk_size:]
-            len_sent += len(chunk)
+            encrypted = AESCipher.encrypt(key, chunk)  # Encrypt with AES
+            encoded = base64.b64encode(encrypted).decode() + "\n"  # Base64 encode + newline
+            socket.sendall(encoded.encode())
 
-            chunk = AESCipher.encrypt(key, chunk)  # encrypt with aes
-            socket.send(Protocol.add_prefix(chunk))
-        bin_done = BIN_DONE
-        bin_done = str(bin_done).encode()
-        bin_done = AESCipher.encrypt(key, bin_done)
-        bin_done = Protocol.add_prefix(bin_done)
-        socket.send(bin_done)
+        # Send the termination signal
+        bin_done = str(BIN_DONE).encode()
+        encrypted_done = AESCipher.encrypt(key, bin_done)
+        encoded_done = base64.b64encode(encrypted_done).decode() + "\n"
+        socket.sendall(encoded_done.encode())
 
     @staticmethod
     def receive_bin(conn):
         """
-        receive binary data
-        :param conn: socket and key
-        :return: data received
+        Receive binary data and decode it from Base64.
+        :param conn: Tuple (socket, key)
+        :return: Decrypted binary data
         """
         socket, key = conn
-        data = INITIAL_DATA
+        data = b''
+
         while True:
-            content_len = MIN_CONTENT_LEN
-            len_received = MIN_LEN_RECEIVED
-            while len_received < MSG_LEN_PADDING:
-                packet = socket.recv(MSG_LEN_PADDING)
-                len_received += len(packet)
-                content_len += int(packet.decode())
+            received_data = socket.makefile().readline().strip()  # Read one line
+            try:
+                decoded = base64.b64decode(received_data)  # Decode Base64
+                decrypted = AESCipher.decrypt(key, decoded)  # Decrypt AES
 
-            len_received = MIN_LEN_RECEIVED
-            chunk = INITIAL_CHUNK_DATA
-            while len_received < content_len:
-                packet = socket.recv(content_len - len_received)
-                len_received += len(packet)
-                chunk += packet
+                if decrypted == str(BIN_DONE).encode():
+                    break
 
-            # decrypt
-            chunk = AESCipher.decrypt(key, chunk)
-
-            if chunk == str(BIN_DONE).encode():
+                data += decrypted
+            except base64.binascii.Error as e:
+                print(f"[ERROR] Base64 decoding failed: {e}")
                 break
-
-            data += chunk
 
         return data
