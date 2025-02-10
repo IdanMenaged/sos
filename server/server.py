@@ -10,7 +10,7 @@ import methods
 import threading
 
 from auth import Auth
-from server.encryption.cipher import Cipher
+from cipher import Cipher
 from social import Social
 
 IP = '0.0.0.0'

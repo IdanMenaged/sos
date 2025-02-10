@@ -3,7 +3,7 @@ Idan Menaged
 protocol for sending messages between server and client
 """
 
-from encryption.my_aes import AESCipher
+from my_aes import AESCipher
 
 MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its
 # len

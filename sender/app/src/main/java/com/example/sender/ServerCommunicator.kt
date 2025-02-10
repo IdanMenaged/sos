@@ -14,7 +14,7 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 
 //private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
-private const val SERVER_IP = "10.20.72.27" // get by running `hostname -i`
+private const val SERVER_IP = "192.168.1.103" // get by running `hostname -i`
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000
@@ -32,6 +32,7 @@ open class ServerCommunicator {
     init {
         socket = initSocket()
         key = socket?.let { Cipher.sendRecvKey(it) }!!
+        Log.d("ServerCommunicator", key.toString())
 
         outputStream = socket?.getOutputStream()
         inputStream = socket?.getInputStream()
@@ -132,6 +133,7 @@ open class ServerCommunicator {
     private fun formatMessage(msg: String): ByteArray {
         val encrypted = AESCipher.encrypt(key, msg.toByteArray())
         val lengthString = encrypted.length.toString().padStart(MSG_LEN_PADDING, '0')
+        Log.d("ServerCommunicator", msg)
         return lengthString.toByteArray(Charsets.UTF_8) + encrypted.toByteArray(Charsets.UTF_8)
     }
 
