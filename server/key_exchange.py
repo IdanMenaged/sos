@@ -45,6 +45,8 @@ def main():
     alice_key = alice.get_key(bob.public_key)
     print(alice_key)
 
+    print(alice.serialize_public_key())
+
 
 if __name__ == "__main__":
     main()

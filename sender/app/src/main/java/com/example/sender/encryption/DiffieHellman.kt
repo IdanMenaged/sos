@@ -1,6 +1,7 @@
 package com.example.sender.encryption
 
 import android.annotation.SuppressLint
+import android.util.Log
 import java.security.*
 import java.security.spec.X509EncodedKeySpec
 import java.util.Base64
@@ -9,8 +10,13 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
 class DiffieHellman {
+    // todo: serialize key with PEM format and change Cipher to use the serialized keys
     private val keyPair: KeyPair = generateKeyPair()
     val publicKey: ByteArray = keyPair.public.encoded
+
+    init {
+        Log.d("DH", String(publicKey))
+    }
 
     private fun generateKeyPair(): KeyPair {
         val keyGen = KeyPairGenerator.getInstance("EC")
