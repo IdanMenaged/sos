@@ -5,6 +5,7 @@
 package com.example.sender
 
 import android.util.Log
+import com.example.sender.encryption.AESCipher
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketTimeoutException
@@ -92,7 +93,10 @@ open class ServerCommunicator {
             val messageBytes = ByteArray(msgLen)
             inputStream?.read(messageBytes)
 
-            return String(messageBytes)
+            // decrypt
+            val decrypted = AESCipher.decrypt(key, String(messageBytes))
+
+            return String(decrypted)
         }
         catch (e: SocketTimeoutException) {
             if (this is Listener) {
@@ -111,10 +115,12 @@ open class ServerCommunicator {
 
     /**
      * adds a prefix to the message to denote it's length
+     * encrypt with aes
      */
     private fun formatMessage(msg: String): ByteArray {
-        val lengthString = msg.length.toString().padStart(MSG_LEN_PADDING, '0')
-        return lengthString.toByteArray(Charsets.UTF_8) + msg.toByteArray(Charsets.UTF_8)
+        val encrypted = AESCipher.encrypt(key, msg.toByteArray())
+        val lengthString = encrypted.length.toString().padStart(MSG_LEN_PADDING, '0')
+        return lengthString.toByteArray(Charsets.UTF_8) + encrypted.toByteArray(Charsets.UTF_8)
     }
 
     /**

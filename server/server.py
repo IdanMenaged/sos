@@ -2,7 +2,6 @@
 Server
 Idan Menaged
 """
-import importlib
 import socket
 import sys
 from protocol import Protocol
@@ -33,7 +32,7 @@ class Server:
         """
         constructor
         """
-        self.listeners = {}  # user_id: socket
+        self.listeners = {}  # user_id: connection
         self.auth = Auth()
         self.social = Social()
 
