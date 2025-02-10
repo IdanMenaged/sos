@@ -6,6 +6,9 @@ package com.example.sender
 
 import android.util.Log
 import com.example.sender.encryption.AESCipher
+import com.example.sender.encryption.Cipher
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketTimeoutException
@@ -21,9 +24,18 @@ private const val TIMEOUT = 10000
  * Handles server communication
  */
 open class ServerCommunicator {
-    private val socket = initSocket()
-    private val outputStream = socket?.getOutputStream()
-    private val inputStream = socket?.getInputStream()
+    private var socket: Socket?
+    private var key: ByteArray
+    private val outputStream: OutputStream?
+    private val inputStream: InputStream?
+
+    init {
+        socket = initSocket()
+        key = socket?.let { Cipher.sendRecvKey(it) }!!
+
+        outputStream = socket?.getOutputStream()
+        inputStream = socket?.getInputStream()
+    }
 
     /**
      * send a request to the server and receive a response.

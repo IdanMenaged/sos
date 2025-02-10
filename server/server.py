@@ -10,10 +10,12 @@ import methods
 import threading
 
 from auth import Auth
+from server.encryption.cipher import Cipher
 from social import Social
 
 IP = '0.0.0.0'
 SIM_USERS = 1
+SOCKET_INDEX = 0
 
 
 def main():
@@ -62,17 +64,19 @@ class Server:
         handle a single client and send them a response based on their request
         :return: should server terminate?
         """
+        key = Cipher.recv_send_key((client_socket, None))
+        conn = (client_socket, key)
 
         while True:
             try:
-                req = Protocol.receive(client_socket).lower()
+                req = Protocol.receive(conn).lower()
 
-                res = self.handle_req(client_socket, req, addr)
+                res = self.handle_req(conn, req, addr)
 
                 if req.split()[0] in BIN_METHODS:
-                    Protocol.send_bin(client_socket, res)
+                    Protocol.send_bin(conn, res)
                 else:
-                    Protocol.send(client_socket, res)
+                    Protocol.send(conn, res)
 
                 if res in EXIT_CODES:
                     break
@@ -85,19 +89,19 @@ class Server:
 
         client_socket.close()
 
-        for user_id, listener_sock in self.listeners.items():
-            if client_socket == listener_sock:
+        for user_id, listener_conn in self.listeners.items():
+            if client_socket == listener_conn[SOCKET_INDEX]:
                 self.listeners.pop(user_id)
                 print(f'listener of user {user_id} has been terminated')
                 break
 
         return False
 
-    def handle_req(self, client_socket, req, addr):
+    def handle_req(self, conn, req, addr):
         """
         determines a response based on a request
         :param addr: client address, format: (ip, port)
-        :param client_socket: client socket
+        :param conn: client socket and key
         :param req: request
         :return: response
         """
@@ -107,7 +111,7 @@ class Server:
         if cmd == 'send_to':
             res = self.send_to(*params)
         elif cmd == 'am_listener':
-            self.listeners[params[0]] = client_socket
+            self.listeners[params[0]] = conn
             print(self.listeners)
             print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
@@ -143,8 +147,8 @@ class Server:
         if user_id not in self.listeners.keys():
             return f'client {user_id} does not have a listener connection'
         else:
-            target_socket = self.listeners[user_id]
-            Protocol.send(target_socket, msg)
+            target_conn = self.listeners[user_id]
+            Protocol.send(target_conn, msg)
 
             return 'message sent'
 
