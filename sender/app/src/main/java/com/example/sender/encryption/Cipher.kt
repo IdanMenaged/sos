@@ -1,7 +1,9 @@
 package com.example.sender.encryption
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import java.net.Socket
 import java.io.InputStream
 import java.io.OutputStream
@@ -9,11 +11,12 @@ import java.util.Base64
 
 class Cipher {
     companion object {
-        const val TAG = "Cipher"
+        private const val TAG = "Cipher"
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun sendRecvKey(conn: Socket): ByteArray {
             val dh = DiffieHellman()
-            sendBin(conn.getOutputStream(), dh.publicKey) // DH public key
+            sendBin(conn.getOutputStream(), dh.serializePublicKeyToPEM().toByteArray()) // DH public key
             val dhKeyBytes = recvBin(conn.getInputStream()) // DH public key
             val dhKey = dhKeyBytes
 

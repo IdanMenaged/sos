@@ -4,6 +4,7 @@
 
 package com.example.sender
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.example.sender.encryption.AESCipher
 import com.example.sender.encryption.Cipher
@@ -14,7 +15,7 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 
 //private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
-private const val SERVER_IP = "10.20.72.124" // get by running `hostname -i`
+private const val SERVER_IP = "10.20.72.64" // get by running `hostname -i`
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000
@@ -23,6 +24,7 @@ private const val TIMEOUT = 10000
 /**
  * Handles server communication
  */
+@SuppressLint("NewApi")
 open class ServerCommunicator {
     private var socket: Socket?
     private var key: ByteArray

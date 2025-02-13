@@ -1,7 +1,9 @@
 package com.example.sender.encryption
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import java.security.*
 import java.security.spec.X509EncodedKeySpec
 import java.util.Base64
@@ -38,6 +40,16 @@ class DiffieHellman {
         val digest = MessageDigest.getInstance("SHA-256")
         val keyBytes = digest.digest(sharedSecret).copyOf(32)
         return SecretKeySpec(keyBytes, "AES")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun serializePublicKeyToPEM(): String {
+        val base64Encoded = Base64.getEncoder().encodeToString(publicKey)
+        return """
+            -----BEGIN PUBLIC KEY-----
+            $base64Encoded
+            -----END PUBLIC KEY-----
+        """.trimIndent()
     }
 }
 
