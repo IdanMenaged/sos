@@ -4,13 +4,17 @@
 
 package com.example.sender
 
+import android.annotation.SuppressLint
 import android.util.Log
+import com.example.encryptionsandbox.AESCipher
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.SocketTimeoutException
 
 //private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
-private const val SERVER_IP = "10.20.72.124" // get by running `hostname -i`
+private const val SERVER_IP = "10.20.72.64" // get by running `hostname -i`
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000
@@ -19,10 +23,21 @@ private const val TIMEOUT = 10000
 /**
  * Handles server communication
  */
+@SuppressLint("NewApi")
 open class ServerCommunicator {
-    private val socket = initSocket()
-    private val outputStream = socket?.getOutputStream()
-    private val inputStream = socket?.getInputStream()
+    private var socket: Socket?
+    private var key: ByteArray
+    private val outputStream: OutputStream?
+    private val inputStream: InputStream?
+
+    init {
+        socket = initSocket()
+        key = socket?.let { Cipher.sendRecvKey(it) }!!
+        Log.d("ServerCommunicator", key.toString())
+
+        outputStream = socket?.getOutputStream()
+        inputStream = socket?.getInputStream()
+    }
 
     /**
      * send a request to the server and receive a response.
@@ -81,7 +96,7 @@ open class ServerCommunicator {
      * inputStream (InputStream): input stream of the socket
      * returns (String): message received
      */
-     fun receiveMessageFromServer(): String? {
+    fun receiveMessageFromServer(): String? {
         try {
             // Get the message length
             val msgLenBytes = ByteArray(MSG_LEN_PADDING)
@@ -92,7 +107,10 @@ open class ServerCommunicator {
             val messageBytes = ByteArray(msgLen)
             inputStream?.read(messageBytes)
 
-            return String(messageBytes)
+            // decrypt
+            val decrypted = AESCipher.decrypt(key, String(messageBytes))
+
+            return String(decrypted)
         }
         catch (e: SocketTimeoutException) {
             if (this is Listener) {
@@ -111,10 +129,13 @@ open class ServerCommunicator {
 
     /**
      * adds a prefix to the message to denote it's length
+     * encrypt with aes
      */
     private fun formatMessage(msg: String): ByteArray {
-        val lengthString = msg.length.toString().padStart(MSG_LEN_PADDING, '0')
-        return lengthString.toByteArray(Charsets.UTF_8) + msg.toByteArray(Charsets.UTF_8)
+        val encrypted = AESCipher.encrypt(key, msg.toByteArray())
+        val lengthString = encrypted.length.toString().padStart(MSG_LEN_PADDING, '0')
+        Log.d("ServerCommunicator", msg)
+        return lengthString.toByteArray(Charsets.UTF_8) + encrypted.toByteArray(Charsets.UTF_8)
     }
 
     /**
