@@ -1,4 +1,7 @@
-package com.example.encryptionsandbox
+package com.example.sender
+
+import com.example.encryptionsandbox.DiffieHellman
+import com.example.encryptionsandbox.Protocol
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.net.ServerSocket
 import java.net.Socket
