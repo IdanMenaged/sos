@@ -3,6 +3,8 @@ Idan Menaged
 protocol for sending messages between server and client
 """
 
+from my_aes import AESCipher
+
 MSG_LEN_PADDING = 4  # n of bytes to put in front of the content to show its
 # len
 MAX_CHUNK_SIZE = 1024
@@ -28,23 +30,26 @@ class Protocol:
         return str(len(content)).zfill(MSG_LEN_PADDING).encode() + content
 
     @staticmethod
-    def send(socket, content):
+    def send(conn, content):
+        socket, key = conn
         """
-        :param socket: comm socket
+        :param conn: socket and key
         :param content: string with the content to be sent
         :return: None
         """
         content = content.encode()  # convert to bytes
+        content = AESCipher.encrypt(key, content)  # encrypt with aes
         content = Protocol.add_prefix(content)
 
         socket.send(content)
 
     @staticmethod
-    def receive(socket):
+    def receive(conn):
         """
-        :param socket: comm socket
+        :param conn: socket and key
         :return: stricontent_lenng with content
         """
+        socket, key = conn
         content_len = MIN_CONTENT_LEN
         len_received = MIN_LEN_RECEIVED
         while len_received < MSG_LEN_PADDING:
@@ -58,15 +63,20 @@ class Protocol:
             packet = socket.recv(content_len - len_received)
             len_received += len(packet)
             content += packet.decode()
+
+        # decrypt
+        content = AESCipher.decrypt(key, content)
+
         return content
 
     @staticmethod
-    def send_bin(socket, content):
+    def send_bin(conn, content):
         """
         send binary data
-        :param socket: socket
+        :param conn: socket and key
         :param content: content to send
         """
+        socket, key = conn
         len_sent = MIN_LEN_SENT
         len_to_send = len(content)
         while len_sent < len_to_send:
@@ -77,16 +87,23 @@ class Protocol:
             chunk = content[:chunk_size]
             content = content[chunk_size:]
             len_sent += len(chunk)
+
+            chunk = AESCipher.encrypt(key, chunk)  # encrypt with aes
             socket.send(Protocol.add_prefix(chunk))
-        socket.send(Protocol.add_prefix(str(BIN_DONE).encode()))
+        bin_done = BIN_DONE
+        bin_done = str(bin_done).encode()
+        bin_done = AESCipher.encrypt(key, bin_done)
+        bin_done = Protocol.add_prefix(bin_done)
+        socket.send(bin_done)
 
     @staticmethod
-    def receive_bin(socket):
+    def receive_bin(conn):
         """
         receive binary data
-        :param socket: socket
+        :param conn: socket and key
         :return: data received
         """
+        socket, key = conn
         data = INITIAL_DATA
         while True:
             content_len = MIN_CONTENT_LEN
@@ -102,6 +119,9 @@ class Protocol:
                 packet = socket.recv(content_len - len_received)
                 len_received += len(packet)
                 chunk += packet
+
+            # decrypt
+            chunk = AESCipher.decrypt(key, chunk)
 
             if chunk == str(BIN_DONE).encode():
                 break
