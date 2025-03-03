@@ -43,8 +43,7 @@ class Geolocation(context: Context, private val onReady: () -> Unit) {
             // Sets the desired interval for
             // active location updates.
             // This interval is inexact.
-            // todo: magic numbers
-            interval = TimeUnit.SECONDS.toMillis(1) // todo: maybe make interval even shorter
+            interval = TimeUnit.SECONDS.toMillis(1)
 
             // Sets the fastest rate for active location updates.
             // This interval is exact, and your application will never
