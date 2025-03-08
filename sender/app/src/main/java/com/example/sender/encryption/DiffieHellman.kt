@@ -12,7 +12,6 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
 class DiffieHellman {
-    // todo: serialize key with PEM format and change Cipher to use the serialized keys
     private val keyPair: KeyPair = generateKeyPair()
     val publicKey: ByteArray = keyPair.public.encoded
 
@@ -27,9 +26,7 @@ class DiffieHellman {
     }
 
     fun generateSharedSecret(otherPublicKeyBytes: ByteArray): ByteArray {
-        val keyFactory = KeyFactory.getInstance("EC")
-        val otherPublicKey = keyFactory.generatePublic(X509EncodedKeySpec(otherPublicKeyBytes))
-
+        val otherPublicKey = deserializePublicKeyFromPEM(String(otherPublicKeyBytes))
         val keyAgreement = KeyAgreement.getInstance("ECDH")
         keyAgreement.init(keyPair.private)
         keyAgreement.doPhase(otherPublicKey, true)
@@ -51,19 +48,16 @@ class DiffieHellman {
             -----END PUBLIC KEY-----
         """.trimIndent()
     }
-}
 
-@SuppressLint("NewApi")
-fun main() {
-    val alice = DiffieHellman()
-    val bob = DiffieHellman()
-
-    val aliceSharedSecret = alice.generateSharedSecret(bob.publicKey)
-    val bobSharedSecret = bob.generateSharedSecret(alice.publicKey)
-
-    val aliceKey = alice.deriveKey(aliceSharedSecret)
-    val bobKey = bob.deriveKey(bobSharedSecret)
-
-    println("Alice Key: ${Base64.getEncoder().encodeToString(aliceKey.encoded)}")
-    println("Bob Key: ${Base64.getEncoder().encodeToString(bobKey.encoded)}")
+    // Function to deserialize the PEM-encoded public key
+    @SuppressLint("NewApi")
+    fun deserializePublicKeyFromPEM(pem: String): PublicKey {
+        val base64Encoded = pem
+            .replace("-----BEGIN PUBLIC KEY-----", "")
+            .replace("-----END PUBLIC KEY-----", "")
+            .replace("\n", "")
+        val keyBytes = Base64.getDecoder().decode(base64Encoded)
+        val keyFactory = KeyFactory.getInstance("EC")
+        return keyFactory.generatePublic(X509EncodedKeySpec(keyBytes))
+    }
 }

@@ -88,11 +88,13 @@ class Protocol:
             content = content[chunk_size:]
             len_sent += len(chunk)
 
-            chunk = AESCipher.encrypt(key, chunk)  # encrypt with aes
+            if key is not None:
+                chunk = AESCipher.encrypt(key, chunk)  # encrypt with aes
             socket.send(Protocol.add_prefix(chunk))
         bin_done = BIN_DONE
         bin_done = str(bin_done).encode()
-        bin_done = AESCipher.encrypt(key, bin_done)
+        if key is not None:
+            bin_done = AESCipher.encrypt(key, bin_done)
         bin_done = Protocol.add_prefix(bin_done)
         socket.send(bin_done)
 
