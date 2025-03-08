@@ -7,20 +7,36 @@ import androidx.annotation.RequiresApi
 import java.net.Socket
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.Base64
+import java.security.MessageDigest
+import javax.crypto.spec.SecretKeySpec
 
 class Cipher {
     companion object {
         private const val TAG = "Cipher"
 
         @RequiresApi(Build.VERSION_CODES.O)
+
         fun sendRecvKey(conn: Socket): ByteArray {
             val dh = DiffieHellman()
+
+            // Send the client's public key to the server
             sendBin(conn.getOutputStream(), dh.serializePublicKeyToPEM().toByteArray()) // DH public key
+
+            // Receive the server's public key
             val dhKeyBytes = recvBin(conn.getInputStream()) // DH public key
             val dhKey = dhKeyBytes
 
-            return dh.generateSharedSecret(dhKey)
+            // Generate the shared secret using the received public key
+            val sharedSecret = dh.generateSharedSecret(dhKey)
+
+            // Hash the shared secret to a fixed 32-byte length suitable for AES (AES-256)
+            val digest = MessageDigest.getInstance("SHA-256")
+            val hashedSecret = digest.digest(sharedSecret) // This will give you a 32-byte key
+
+            // Derive a SecretKeySpec using the hashed shared secret for AES
+            val aesKey = SecretKeySpec(hashedSecret, "AES")
+
+            return aesKey.encoded // This is the final AES key (32 bytes)
         }
 
         fun recvSendKey(conn: Socket): ByteArray {
