@@ -121,7 +121,8 @@ class Protocol:
                 chunk += packet
 
             # decrypt
-            chunk = AESCipher.decrypt(key, chunk)
+            if key is not None:
+                chunk = AESCipher.decrypt(key, chunk)
 
             if chunk == str(BIN_DONE).encode():
                 break
