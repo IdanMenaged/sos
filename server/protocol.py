@@ -111,7 +111,8 @@ class Protocol:
             while len_received < MSG_LEN_PADDING:
                 packet = socket.recv(MSG_LEN_PADDING)
                 len_received += len(packet)
-                content_len += int(packet.decode())
+                if packet != b"":
+                    content_len += int(packet.decode())
 
             len_received = MIN_LEN_RECEIVED
             chunk = INITIAL_CHUNK_DATA
@@ -128,5 +129,7 @@ class Protocol:
                 break
 
             data += chunk
+            if len_received == content_len:
+                break
 
         return data
