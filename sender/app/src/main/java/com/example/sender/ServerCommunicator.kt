@@ -109,6 +109,7 @@ open class ServerCommunicator {
             inputStream?.read(messageBytes)
 
             // decrypt
+            Log.d("ServerCommunicator", "enc: ${String(messageBytes)}")
             val decrypted = AESCipher.decrypt(key, String(messageBytes))
 
             return String(decrypted)
