@@ -2,7 +2,6 @@ package com.example.sender.encryption
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import java.security.*
 import java.security.spec.X509EncodedKeySpec
@@ -14,10 +13,6 @@ import javax.crypto.spec.SecretKeySpec
 class DiffieHellman {
     private val keyPair: KeyPair = generateKeyPair()
     val publicKey: ByteArray = keyPair.public.encoded
-
-    init {
-        Log.d("DH", String(publicKey))
-    }
 
     private fun generateKeyPair(): KeyPair {
         val keyGen = KeyPairGenerator.getInstance("EC")

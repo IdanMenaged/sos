@@ -2,7 +2,6 @@ package com.example.sender.encryption
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import java.net.Socket
 import java.io.InputStream
@@ -51,10 +50,6 @@ class Cipher {
         private fun sendBin(outputStream: OutputStream, data: ByteArray) {
             val lengthPrefix = "%04d".format(data.size) // Ensures a 4-character length prefix
             val encodedData = lengthPrefix.toByteArray(Charsets.UTF_8) + data
-            Log.d(TAG, "encoded: " + String(encodedData))
-            Log.d(TAG, "length: $lengthPrefix")
-            Log.d(TAG, "og size: ${data.size}")
-            Log.d(TAG, "data: $data")
             outputStream.write(encodedData)
             outputStream.flush()
         }

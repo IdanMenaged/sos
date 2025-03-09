@@ -34,7 +34,6 @@ open class ServerCommunicator {
     init {
         socket = initSocket()
         key = socket?.let { Cipher.sendRecvKey(it) }!!
-        Log.d("ServerCommunicator", key.toString())
 
         outputStream = socket?.getOutputStream()
         inputStream = socket?.getInputStream()
@@ -136,7 +135,6 @@ open class ServerCommunicator {
     private fun formatMessage(msg: String): ByteArray {
         val encrypted = AESCipher.encrypt(key, msg.toByteArray())
         val lengthString = encrypted.length.toString().padStart(MSG_LEN_PADDING, '0')
-        Log.d("ServerCommunicator", msg)
         return lengthString.toByteArray(Charsets.UTF_8) + encrypted.toByteArray(Charsets.UTF_8)
     }
 

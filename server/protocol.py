@@ -97,8 +97,8 @@ class Protocol:
         bin_done = str(bin_done).encode()
         if key is not None:
             bin_done = AESCipher.encrypt(key, bin_done)
-        bin_done = Protocol.add_prefix(bin_done)
-        socket.send(bin_done)
+            bin_done = Protocol.add_prefix(bin_done)
+            socket.send(bin_done)
 
     @staticmethod
     def receive_bin(conn):
