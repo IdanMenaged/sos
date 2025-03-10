@@ -23,7 +23,9 @@ class AESCipher(object):
         cipher = AES.new(key, AES.MODE_CBC, iv)
         print(f'before aes decryption: {enc}')
         print(f"after aes decryption: {AESCipher._unpad(cipher.decrypt(enc[AES.block_size:]))}")
-        return AESCipher._unpad(cipher.decrypt(enc[AES.block_size:]))
+        print(f'without unpadding: {cipher.decrypt(enc[AES.block_size:])}')
+        print(f'key: {key}')  # todo: are keys the same?
+        return cipher.decrypt(enc[AES.block_size:])
 
     @staticmethod
     def _pad(s):

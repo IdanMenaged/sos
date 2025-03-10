@@ -34,6 +34,7 @@ open class ServerCommunicator {
     init {
         socket = initSocket()
         key = socket?.let { Cipher.sendRecvKey(it) }!!
+        Log.d("ServerCommunicator", "key: ${String(key)}")
 
         outputStream = socket?.getOutputStream()
         inputStream = socket?.getInputStream()
