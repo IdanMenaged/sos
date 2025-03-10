@@ -37,6 +37,7 @@ class Protocol:
         :param content: string with the content to be sent
         :return: None
         """
+        print(f"sending: {content}")
         content = content.encode()  # convert to bytes
         content = AESCipher.encrypt(key, content)  # encrypt with aes
         content = Protocol.add_prefix(content)
@@ -65,7 +66,7 @@ class Protocol:
             content += packet.decode()
 
         # decrypt
-        content = AESCipher.decrypt(key, content)
+        content = AESCipher.decrypt(key, content.encode())
 
         return content
 
@@ -95,8 +96,8 @@ class Protocol:
         bin_done = str(bin_done).encode()
         if key is not None:
             bin_done = AESCipher.encrypt(key, bin_done)
-        bin_done = Protocol.add_prefix(bin_done)
-        socket.send(bin_done)
+            bin_done = Protocol.add_prefix(bin_done)
+            socket.send(bin_done)
 
     @staticmethod
     def receive_bin(conn):
