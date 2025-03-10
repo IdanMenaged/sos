@@ -15,7 +15,7 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 
 //private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
-private const val SERVER_IP = "192.168.1.103" // get by running `hostname -i`
+private const val SERVER_IP = "169.254.73.134" // get by running `hostname -i`
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000
@@ -81,6 +81,7 @@ open class ServerCommunicator {
      * outputStream (OutputStream): output stream of the socket
      */
     private fun sendMessageToServer(msg: String) {
+        Log.d("ServerCommunicator", "sending: $msg")
         val formattedMsg = formatMessage(msg)
         try {
             // Send the message

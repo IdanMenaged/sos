@@ -10,7 +10,7 @@ import java.security.MessageDigest
 
 object AESCipher {
     private const val AES_ALGORITHM = "AES"
-    private const val AES_TRANSFORMATION = "AES/CBC/PKCS5Padding"
+    private const val AES_TRANSFORMATION = "AES/CBC/PKCS7Padding"
     private const val KEY_SIZE = 32 // 256-bit key
     private const val BLOCK_SIZE = 16
 
