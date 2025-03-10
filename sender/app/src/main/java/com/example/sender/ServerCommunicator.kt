@@ -82,6 +82,7 @@ open class ServerCommunicator {
      * outputStream (OutputStream): output stream of the socket
      */
     private fun sendMessageToServer(msg: String) {
+        Log.d("ServerCommunicator", "sending: $msg")
         val formattedMsg = formatMessage(msg)
         try {
             // Send the message
