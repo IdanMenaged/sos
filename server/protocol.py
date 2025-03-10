@@ -37,8 +37,10 @@ class Protocol:
         :param content: string with the content to be sent
         :return: None
         """
+        print(f"sending: {content}")
         content = content.encode()  # convert to bytes
         content = AESCipher.encrypt(key, content)  # encrypt with aes
+        print(f'enc: {content}')
         content = Protocol.add_prefix(content)
 
         socket.send(content)
@@ -65,7 +67,7 @@ class Protocol:
             content += packet.decode()
 
         # decrypt
-        content = AESCipher.decrypt(key, content)
+        content = AESCipher.decrypt(key, content.encode())
 
         return content
 
@@ -88,13 +90,15 @@ class Protocol:
             content = content[chunk_size:]
             len_sent += len(chunk)
 
-            chunk = AESCipher.encrypt(key, chunk)  # encrypt with aes
+            if key is not None:
+                chunk = AESCipher.encrypt(key, chunk)  # encrypt with aes
             socket.send(Protocol.add_prefix(chunk))
         bin_done = BIN_DONE
         bin_done = str(bin_done).encode()
-        bin_done = AESCipher.encrypt(key, bin_done)
-        bin_done = Protocol.add_prefix(bin_done)
-        socket.send(bin_done)
+        if key is not None:
+            bin_done = AESCipher.encrypt(key, bin_done)
+            bin_done = Protocol.add_prefix(bin_done)
+            socket.send(bin_done)
 
     @staticmethod
     def receive_bin(conn):
@@ -111,7 +115,8 @@ class Protocol:
             while len_received < MSG_LEN_PADDING:
                 packet = socket.recv(MSG_LEN_PADDING)
                 len_received += len(packet)
-                content_len += int(packet.decode())
+                if packet != b"":
+                    content_len += int(packet.decode())
 
             len_received = MIN_LEN_RECEIVED
             chunk = INITIAL_CHUNK_DATA
@@ -121,11 +126,14 @@ class Protocol:
                 chunk += packet
 
             # decrypt
-            chunk = AESCipher.decrypt(key, chunk)
+            if key is not None:
+                chunk = AESCipher.decrypt(key, chunk)
 
             if chunk == str(BIN_DONE).encode():
                 break
 
             data += chunk
+            if len_received == content_len:
+                break
 
         return data

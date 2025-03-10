@@ -6,7 +6,8 @@ package com.example.sender
 
 import android.annotation.SuppressLint
 import android.util.Log
-import com.example.encryptionsandbox.AESCipher
+import com.example.sender.encryption.AESCipher
+import com.example.sender.encryption.Cipher
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.InetSocketAddress
@@ -14,7 +15,7 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 
 //private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
-private const val SERVER_IP = "192.168.1.103" // get by running `hostname -i`
+private const val SERVER_IP = "169.254.73.134" // get by running `hostname -i`
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 private const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000
@@ -33,7 +34,6 @@ open class ServerCommunicator {
     init {
         socket = initSocket()
         key = socket?.let { Cipher.sendRecvKey(it) }!!
-        Log.d("ServerCommunicator", key.toString())
 
         outputStream = socket?.getOutputStream()
         inputStream = socket?.getInputStream()
@@ -81,6 +81,7 @@ open class ServerCommunicator {
      * outputStream (OutputStream): output stream of the socket
      */
     private fun sendMessageToServer(msg: String) {
+        Log.d("ServerCommunicator", "sending: $msg")
         val formattedMsg = formatMessage(msg)
         try {
             // Send the message
@@ -108,6 +109,8 @@ open class ServerCommunicator {
             inputStream?.read(messageBytes)
 
             // decrypt
+            Log.d("ServerCommunicator", "enc: ${String(messageBytes)}")
+
             val decrypted = AESCipher.decrypt(key, String(messageBytes))
 
             return String(decrypted)
@@ -134,7 +137,6 @@ open class ServerCommunicator {
     private fun formatMessage(msg: String): ByteArray {
         val encrypted = AESCipher.encrypt(key, msg.toByteArray())
         val lengthString = encrypted.length.toString().padStart(MSG_LEN_PADDING, '0')
-        Log.d("ServerCommunicator", msg)
         return lengthString.toByteArray(Charsets.UTF_8) + encrypted.toByteArray(Charsets.UTF_8)
     }
 
