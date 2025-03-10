@@ -97,7 +97,7 @@ open class ServerCommunicator {
      * inputStream (InputStream): input stream of the socket
      * returns (String): message received
      */
-     fun receiveMessageFromServer(): String? {
+    fun receiveMessageFromServer(): String? {
         try {
             // Get the message length
             val msgLenBytes = ByteArray(MSG_LEN_PADDING)
@@ -110,6 +110,7 @@ open class ServerCommunicator {
 
             // decrypt
             Log.d("ServerCommunicator", "enc: ${String(messageBytes)}")
+
             val decrypted = AESCipher.decrypt(key, String(messageBytes))
 
             return String(decrypted)
