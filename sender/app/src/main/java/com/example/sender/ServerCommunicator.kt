@@ -81,6 +81,7 @@ open class ServerCommunicator {
      * outputStream (OutputStream): output stream of the socket
      */
     private fun sendMessageToServer(msg: String) {
+        Log.d("ServerCommunicator", "sending: $msg")
         val formattedMsg = formatMessage(msg)
         try {
             // Send the message
@@ -108,7 +109,8 @@ open class ServerCommunicator {
             inputStream?.read(messageBytes)
 
             // decrypt
-            Log.d("ServerCommunicator", "enc: ${String(messageBytes)}")
+            Log.d("ServerCommunicator", "received enc: ${String(messageBytes)}")
+            Log.d("ServerCommunicator", "key: $key")
             val decrypted = AESCipher.decrypt(key, String(messageBytes))
 
             return String(decrypted)

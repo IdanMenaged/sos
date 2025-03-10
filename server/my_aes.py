@@ -21,6 +21,8 @@ class AESCipher(object):
         enc = base64.b64decode(enc + b'==')
         iv = enc[:AES.block_size]
         cipher = AES.new(key, AES.MODE_CBC, iv)
+        print(f'before aes decryption: {enc}')
+        print(f"after aes decryption: {AESCipher._unpad(cipher.decrypt(enc[AES.block_size:]))}")
         return AESCipher._unpad(cipher.decrypt(enc[AES.block_size:]))
 
     @staticmethod

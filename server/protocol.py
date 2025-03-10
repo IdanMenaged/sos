@@ -67,7 +67,10 @@ class Protocol:
             content += packet.decode()
 
         # decrypt
+        print(f"received enc: {content}")
+        print(f'as bytes: {content.encode()}')
         content = AESCipher.decrypt(key, content.encode())
+        print(f'received decrypted: {content}')
 
         return content
 
