@@ -1,31 +1,27 @@
 import socket
 
-import protocol
+from protocol import Protocol
 from key_exchange import *
 
 
 class Cipher(object):
-
-    @staticmethod
-    def send_recv_key(conn):
-        dh = DiffieHellman()
-        protocol.Protocol.send_bin(conn,
-                               dh.serialize_public_key())  # DH public key
-        dh_key_bytes = protocol.Protocol.receive_bin(conn)  # DH public key
-        dh_key = dh.deserialize_public_key(dh_key_bytes)
-
-        key = dh.get_key(dh_key)
-        return key
-
     @staticmethod
     def recv_send_key(conn):
         """ recieves client dh key and sends both dh key and aes key """
-        dh_key_bytes = protocol.Protocol.receive_bin(conn)
         dh = DiffieHellman()
-        dh_key = dh.deserialize_public_key(dh_key_bytes)
-        protocol.Protocol.send_bin(conn, dh.serialize_public_key())
-        key = dh.get_key(dh_key)
-        return key
+
+        # receive key
+        other_public_key = Protocol.receive_bin(conn)
+        other_public_key = dh.deserialize_public_key(other_public_key)
+
+        # send key
+        own_public_key = dh.serialize_public_key()
+        Protocol.send_bin(conn, own_public_key)
+
+        # derive key
+        aes_key = dh.get_key(other_public_key)
+        print(aes_key)
+        return aes_key
 
 
 if __name__ == '__main__':
