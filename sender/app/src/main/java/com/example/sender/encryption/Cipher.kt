@@ -24,6 +24,7 @@ class Cipher {
         fun sendRecvKey(conn: Socket): ByteArray {
             val dh = DiffieHellman()
             val publicKey = dh.serializePublicKeyToPEM()
+            println("sending: $publicKey")
 
             // Send key
             val formattedMsg = formatMessage(publicKey)
@@ -47,6 +48,7 @@ class Cipher {
                 conn.getInputStream().read(messageBytes)
 
                 otherPublicKey = messageBytes
+                println("received: $otherPublicKey")
             } catch (e: Exception) {
                 Log.e(TAG, "error receiving key", e)
                 return "".toByteArray()
@@ -56,7 +58,6 @@ class Cipher {
             val aesKey = dh.deriveAesKey(
                 dh.generateSharedSecret(otherPublicKey)
             )
-            println(String(aesKey.encoded))
             return aesKey.encoded
         }
 
@@ -77,7 +78,7 @@ fun main() {
     // perform key exchange
     val key = Cipher.sendRecvKey(socket)
     val ownHex = key.joinToString("") { "%02x".format(it) }
-    println(ownHex)
+    println("aes key: $ownHex")
 
     socket.close()
 }

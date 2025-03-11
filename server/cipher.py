@@ -12,15 +12,16 @@ class Cipher(object):
 
         # receive key
         other_public_key = Protocol.receive_bin(conn)
+        print(f"received: {other_public_key}")
         other_public_key = dh.deserialize_public_key(other_public_key)
 
         # send key
         own_public_key = dh.serialize_public_key()
+        print(f'sending: {own_public_key}')
         Protocol.send_bin(conn, own_public_key)
 
         # derive key
         aes_key = dh.get_key(other_public_key)
-        print(aes_key)
         return aes_key
 
 
@@ -34,7 +35,7 @@ if __name__ == '__main__':
 
     # perform key exchange
     key = Cipher.recv_send_key((client_sock, None))
-    print(key.hex())
+    print(f'aes key: {key.hex()}')
 
     client_sock.close()
     sock.close()
