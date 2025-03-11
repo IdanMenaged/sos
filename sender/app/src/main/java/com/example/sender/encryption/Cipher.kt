@@ -31,6 +31,7 @@ class Cipher {
 
             // Generate the shared secret using the received public key
             val sharedSecret = dh.generateSharedSecret(dhKey)
+            println("shared secret: ${String(sharedSecret)}") // for tests
 
             // Hash the shared secret to a fixed 32-byte length suitable for AES (AES-256)
             val digest = MessageDigest.getInstance("SHA-256")
@@ -84,6 +85,6 @@ fun main() {
     val key = Cipher.sendRecvKey(socket)
     val ownHex = key.joinToString("") { "%02x".format(it) }
     println(ownHex)
-    
+
     socket.close()
 }

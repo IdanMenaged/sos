@@ -40,4 +40,5 @@ if __name__ == '__main__':
     key = Cipher.recv_send_key((client_sock, None))
     print(key.hex())
 
+    client_sock.close()
     sock.close()
