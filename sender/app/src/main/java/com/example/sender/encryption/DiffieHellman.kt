@@ -2,6 +2,7 @@ package com.example.sender.encryption
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import java.security.*
 import java.security.spec.X509EncodedKeySpec
@@ -55,4 +56,18 @@ class DiffieHellman {
         val keyFactory = KeyFactory.getInstance("EC")
         return keyFactory.generatePublic(X509EncodedKeySpec(keyBytes))
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun main() {
+    val alice = DiffieHellman()
+    val bob = DiffieHellman()
+
+    val bobKey = bob.generateSharedSecret(alice.serializePublicKeyToPEM().toByteArray())
+    println("bob: ${String(bobKey)}")
+
+    val aliceKey = alice.generateSharedSecret(bob.serializePublicKeyToPEM().toByteArray())
+    println("alice: ${String(aliceKey)}")
+
+    println("equals: ${bobKey.contentEquals(aliceKey)}")
 }
