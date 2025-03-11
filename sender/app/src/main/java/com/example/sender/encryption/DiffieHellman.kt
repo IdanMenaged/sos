@@ -21,6 +21,21 @@ class DiffieHellman {
         return keyGen.generateKeyPair()
     }
 
+//    fun generateSharedSecret(otherPublicKeyBytes: ByteArray): ByteArray {
+//        val otherPublicKey = deserializePublicKeyFromPEM(String(otherPublicKeyBytes))
+//        val keyAgreement = KeyAgreement.getInstance("ECDH")
+//        keyAgreement.init(keyPair.private)
+//        keyAgreement.doPhase(otherPublicKey, true)
+//        return keyAgreement.generateSecret()
+//    }
+//
+//    fun deriveKey(sharedSecret: ByteArray): SecretKey {
+//        val digest = MessageDigest.getInstance("SHA-256")
+//        val keyBytes = digest.digest(sharedSecret).copyOf(32)
+//        return SecretKeySpec(keyBytes, "AES")
+//    }
+
+    // Generate a shared secret using your private key and the other side's public key
     fun generateSharedSecret(otherPublicKeyBytes: ByteArray): ByteArray {
         val otherPublicKey = deserializePublicKeyFromPEM(String(otherPublicKeyBytes))
         val keyAgreement = KeyAgreement.getInstance("ECDH")
@@ -29,9 +44,10 @@ class DiffieHellman {
         return keyAgreement.generateSecret()
     }
 
-    fun deriveKey(sharedSecret: ByteArray): SecretKey {
+    // Derive an AES key from the shared secret using SHA-256
+    fun deriveAesKey(sharedSecret: ByteArray): SecretKey {
         val digest = MessageDigest.getInstance("SHA-256")
-        val keyBytes = digest.digest(sharedSecret).copyOf(32)
+        val keyBytes = digest.digest(sharedSecret).copyOf(32) // 256-bit AES key
         return SecretKeySpec(keyBytes, "AES")
     }
 
@@ -63,11 +79,13 @@ fun main() {
     val alice = DiffieHellman()
     val bob = DiffieHellman()
 
-    val bobKey = bob.generateSharedSecret(alice.serializePublicKeyToPEM().toByteArray())
-    println("bob: ${String(bobKey)}")
+    val bobSecret = bob.generateSharedSecret(alice.serializePublicKeyToPEM().toByteArray())
+    val bobKey = bob.deriveAesKey(bobSecret)
+    println("bob: ${String(bobKey.encoded)}")
 
-    val aliceKey = alice.generateSharedSecret(bob.serializePublicKeyToPEM().toByteArray())
-    println("alice: ${String(aliceKey)}")
+    val aliceSecret = alice.generateSharedSecret(bob.serializePublicKeyToPEM().toByteArray())
+    val aliceKey = alice.deriveAesKey(aliceSecret)
+    println("alice: ${String(aliceKey.encoded)}")
 
-    println("equals: ${bobKey.contentEquals(aliceKey)}")
+    println("equals: ${bobKey == aliceKey}")
 }
