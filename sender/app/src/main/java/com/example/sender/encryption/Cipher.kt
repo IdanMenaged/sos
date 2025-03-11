@@ -3,10 +3,14 @@ package com.example.sender.encryption
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.sender.ServerCommunicator
 import java.net.Socket
 import java.io.InputStream
 import java.io.OutputStream
+import java.net.InetSocketAddress
+import java.net.ServerSocket
 import java.security.MessageDigest
+import java.util.Base64
 import javax.crypto.spec.SecretKeySpec
 
 class Cipher {
@@ -67,4 +71,19 @@ class Cipher {
         }
 
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun main() {
+    // init socket
+    val socket = Socket()
+    socket.soTimeout = 9999999
+    socket.connect(InetSocketAddress("127.0.0.1", 4000), 9999999)
+
+    // perform key exchange
+    val key = Cipher.sendRecvKey(socket)
+    val ownHex = key.joinToString("") { "%02x".format(it) }
+    println(ownHex)
+    
+    socket.close()
 }
