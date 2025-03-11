@@ -48,7 +48,7 @@ class Cipher {
                 conn.getInputStream().read(messageBytes)
 
                 otherPublicKey = messageBytes
-                println("received: $otherPublicKey")
+                println("received: ${otherPublicKey.toString(Charsets.UTF_8)}")
             } catch (e: Exception) {
                 Log.e(TAG, "error receiving key", e)
                 return "".toByteArray()
