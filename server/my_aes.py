@@ -21,11 +21,10 @@ class AESCipher(object):
         enc = base64.b64decode(enc + b'==')
         iv = enc[:AES.block_size]
         cipher = AES.new(key, AES.MODE_CBC, iv)
-        print(f'before aes decryption: {enc}')
-        print(f"after aes decryption: {AESCipher._unpad(cipher.decrypt(enc[AES.block_size:]))}")
-        print(f'without unpadding: {cipher.decrypt(enc[AES.block_size:])}')
-        print(f'key: {key}')  # todo: are keys the same?
-        return cipher.decrypt(enc[AES.block_size:])
+        decrypted = cipher.decrypt(enc[AES.block_size:])
+        # remove garbage data
+        decrypted = decrypted.decode().replace("\r", "")
+        return decrypted
 
     @staticmethod
     def _pad(s):

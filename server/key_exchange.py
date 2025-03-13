@@ -28,7 +28,6 @@ class DiffieHellman:
     def get_key(self, public_key):
         """ return generated shared key, hashed """
         shared_key = self.diffieHellman.exchange(ec.ECDH(), public_key)
-        print(f"shared secret: {shared_key}")
 
         # Derive the AES key using SHA-256 (simple hash, no HKDF)
         digest = hashlib.sha256(shared_key).digest()

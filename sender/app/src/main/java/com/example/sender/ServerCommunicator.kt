@@ -15,7 +15,7 @@ import java.net.Socket
 import java.net.SocketTimeoutException
 
 //private const val SERVER_IP = "10.0.2.2" // special built-in port that directs to development machine
-private const val SERVER_IP = "10.20.74.218" // get by running `hostname -i`
+private const val SERVER_IP = "192.168.1.103" // get by running `hostname -i`
 private const val SERVER_PORT = 4000 // needs to match the port server is running on
 const val MSG_LEN_PADDING = 4 // for formatting messages in a way the server can understand
 private const val TIMEOUT = 10000

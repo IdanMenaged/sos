@@ -40,7 +40,6 @@ class Protocol:
         print(f"sending: {content}")
         content = content.encode()  # convert to bytes
         content = AESCipher.encrypt(key, content)  # encrypt with aes
-        print(f'enc: {content}')
         content = Protocol.add_prefix(content)
 
         socket.send(content)
@@ -67,10 +66,8 @@ class Protocol:
             content += packet.decode()
 
         # decrypt
-        print(f"received enc: {content}")
-        print(f'as bytes: {content.encode()}')
         content = AESCipher.decrypt(key, content.encode())
-        print(f'received decrypted: {content}')
+        print(f'received: {content}')
 
         return content
 
