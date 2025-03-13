@@ -13,14 +13,15 @@ def main():
     create a db, format it, and add data
     :return: None
     """
+    from auth import Auth
+
     db = DBManager()
     db.format_db()
-    print(db.exec(
-        "INSERT INTO Users (name, password) VALUES (?, ?)",
-        'idan', 'password'))
-    print(db.exec(
-        "INSERT INTO Users (name, password) VALUES (?, ?)",
-        'ayelet', '1234'))
+
+    a = Auth()
+    a.signup("idan", "password")
+    a.signup("ayelet", "1234")
+
     print('done')
 
 
