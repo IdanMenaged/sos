@@ -13,6 +13,7 @@ class DiffieHellman:
         """ constructor"""
         self.diffieHellman = ec.generate_private_key(ec.SECP384R1())
         self.public_key = self.diffieHellman.public_key()
+        # print(f"public key: {self.serialize_public_key()}")
 
     def serialize_public_key(self):
         """ serialize public key object """
@@ -26,6 +27,7 @@ class DiffieHellman:
     def get_key(self, public_key):
         """ return generated shared key, hashed """
         shared_key = self.diffieHellman.exchange(ec.ECDH(), public_key)
+        print(f"shared secret: {shared_key}")
 
         derived_key = HKDF(algorithm=hashes.SHA256(), length=32, salt=None,
                             info=None).derive(shared_key)

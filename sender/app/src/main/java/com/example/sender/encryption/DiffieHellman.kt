@@ -41,7 +41,9 @@ class DiffieHellman {
         val keyAgreement = KeyAgreement.getInstance("ECDH")
         keyAgreement.init(keyPair.private)
         keyAgreement.doPhase(otherPublicKey, true)
-        return keyAgreement.generateSecret()
+        val sharedSecret = keyAgreement.generateSecret()
+        println("shared secret: $sharedSecret")
+        return sharedSecret
     }
 
     // Derive an AES key from the shared secret using SHA-256
@@ -55,8 +57,8 @@ class DiffieHellman {
     @RequiresApi(Build.VERSION_CODES.O)
     fun serializePublicKeyToPEM(): String {
         val base64Encoded = Base64.getEncoder().encodeToString(publicKey) // todo: why do the keys always start the same??
-        println("key: ${publicKey.toHexString()}")
-        println("b64: $base64Encoded")
+//        println("key: ${publicKey.toHexString()}")
+//        println("b64: $base64Encoded")
         return """
             -----BEGIN PUBLIC KEY-----
             $base64Encoded
