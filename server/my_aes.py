@@ -1,5 +1,6 @@
 import base64
 import hashlib
+from pydoc import replace
 
 # Use PyCryptodomeX
 from Cryptodome.Random import get_random_bytes
@@ -23,8 +24,11 @@ class AESCipher(object):
         cipher = AES.new(key, AES.MODE_CBC, iv)
         decrypted = cipher.decrypt(enc[AES.block_size:])
         # remove garbage data
-        decrypted = decrypted.decode().replace("\r", "")
-        return decrypted
+        # decrypted = ((decrypted.decode()
+        #              .replace("\r", ""))
+        #              .replace("\x10", ''))
+        decrypted = AESCipher._unpad(decrypted)
+        return decrypted.decode()
 
     @staticmethod
     def _pad(s):

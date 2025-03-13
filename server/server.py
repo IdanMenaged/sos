@@ -112,6 +112,7 @@ class Server:
             res = self.send_to(*params)
         elif cmd == 'am_listener':
             self.listeners[params[0]] = conn
+            print(self.listeners)
             res = 'current connection in listening mode'
         else:
             # try all the other method sources available until one succeeds
