@@ -51,9 +51,12 @@ class DiffieHellman {
         return SecretKeySpec(keyBytes, "AES")
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     @RequiresApi(Build.VERSION_CODES.O)
     fun serializePublicKeyToPEM(): String {
-        val base64Encoded = Base64.getEncoder().encodeToString(publicKey)
+        val base64Encoded = Base64.getEncoder().encodeToString(publicKey) // todo: why do the keys always start the same??
+        println("key: ${publicKey.toHexString()}")
+        println("b64: $base64Encoded")
         return """
             -----BEGIN PUBLIC KEY-----
             $base64Encoded
