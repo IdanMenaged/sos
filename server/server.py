@@ -83,9 +83,9 @@ class Server:
             except socket.error as e:
                 print("booz!!", e)
                 break
-            # except Exception as e:
-            #    print("booozzz!!!", e)
-            #    break
+            except Exception as e:
+               print("booozzz!!!", e)
+               break
 
         client_socket.close()
 
