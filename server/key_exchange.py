@@ -1,3 +1,4 @@
+import hashlib
 from secrets import token_bytes
 
 from cryptography.hazmat.primitives import hashes, padding
@@ -29,8 +30,9 @@ class DiffieHellman:
         shared_key = self.diffieHellman.exchange(ec.ECDH(), public_key)
         print(f"shared secret: {shared_key}")
 
-        derived_key = HKDF(algorithm=hashes.SHA256(), length=32, salt=None,
-                            info=None).derive(shared_key)
+        # Derive the AES key using SHA-256 (simple hash, no HKDF)
+        digest = hashlib.sha256(shared_key).digest()
+        derived_key = digest[:32]  # Ensure the key is 32 bytes (256 bits)
         return derived_key
 
 
