@@ -92,7 +92,6 @@ class Server:
         for user_id, listener_conn in self.listeners.items():
             if client_socket == listener_conn[SOCKET_INDEX]:
                 self.listeners.pop(user_id)
-                print(f'listener of user {user_id} has been terminated')
                 break
 
         return False
@@ -113,8 +112,6 @@ class Server:
             res = self.send_to(*params)
         elif cmd == 'am_listener':
             self.listeners[params[0]] = conn
-            print(self.listeners)
-            print(f"listener at {addr[0]}")
             res = 'current connection in listening mode'
         else:
             # try all the other method sources available until one succeeds

@@ -37,7 +37,6 @@ class Protocol:
         :param content: string with the content to be sent
         :return: None
         """
-        print(f"sending: {content}")
         content = content.encode()  # convert to bytes
         content = AESCipher.encrypt(key, content)  # encrypt with aes
         content = Protocol.add_prefix(content)
@@ -67,8 +66,6 @@ class Protocol:
 
         # decrypt
         content = AESCipher.decrypt(key, content.encode())
-        print(f'received: {content}')
-
         return content
 
     @staticmethod

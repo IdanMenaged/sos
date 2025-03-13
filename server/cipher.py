@@ -12,12 +12,10 @@ class Cipher(object):
 
         # receive key
         other_public_key = Protocol.receive_bin(conn)
-        print(f"received: {other_public_key}")
         other_public_key = dh.deserialize_public_key(other_public_key)
 
         # send key
         own_public_key = dh.serialize_public_key()
-        print(f'sending: {own_public_key}')
         Protocol.send_bin(conn, own_public_key)
 
         # derive key
