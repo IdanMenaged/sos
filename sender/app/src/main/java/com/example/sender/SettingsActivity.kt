@@ -3,6 +3,7 @@ package com.example.sender
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -31,7 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 class SettingsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +54,6 @@ class SettingsActivity : ComponentActivity() {
             // Go back button
             IconButton(
                 onClick = {
-                    // Cast context to Activity and call finish() to go back to the previous screen
                     (context as? Activity)?.finish()
                 },
                 modifier = Modifier
@@ -72,13 +71,13 @@ class SettingsActivity : ComponentActivity() {
             Text(
                 text = "Server Settings",
                 style = TextStyle(
-                    fontSize = 32.sp, // Set the font size to make it big
+                    fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 24.dp), // Add space below the title
+                    .padding(bottom = 24.dp),
                 textAlign = TextAlign.Center
             )
 
@@ -95,13 +94,21 @@ class SettingsActivity : ComponentActivity() {
             // Save button
             Button(
                 onClick = {
-                    // Save the IP address and show a Toast message
+                    // Save the IP address
                     val sharedPreferences = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                     with(sharedPreferences.edit()) {
                         putString("server_ip", ipAddress)
                         apply()
                     }
-                    Toast.makeText(context, "Server IP updated", Toast.LENGTH_SHORT).show()
+
+                    // Read it back immediately for confirmation
+                    val updatedIp = sharedPreferences.getString("server_ip", "not found")
+
+                    // Show Toast
+                    Toast.makeText(context, "Server IP updated to $updatedIp", Toast.LENGTH_SHORT).show()
+
+                    // Log
+                    Log.d("SettingsActivity", "Server IP updated to: $updatedIp")
                 }
             ) {
                 Text("Save")
