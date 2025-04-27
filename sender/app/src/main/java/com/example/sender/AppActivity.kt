@@ -13,12 +13,15 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -59,7 +62,6 @@ class AppActivity : ComponentActivity() {
         }
 
         // start listener
-        // todo: rename listener to avoid confusion with speech recognition system
         val intent = Intent(this, ListenerService::class.java)
         startService(intent)
 
@@ -94,8 +96,6 @@ class AppActivity : ComponentActivity() {
 
                 serverCommunicator.closeConnection()
             }
-            // TODO: listen continuously rather than on button press
-            //val voiceRecorder = VoiceRecorder(this)
         }) {
             Text("SOS")
         }
@@ -134,21 +134,37 @@ class AppActivity : ComponentActivity() {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Profile button in top-right corner
-            IconButton(
-                onClick = {
-                    startActivity(Intent(this@AppActivity, ProfileActivity::class.java))
-                },
+            Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(16.dp)
-                    .size(56.dp)
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "User Profile",
-                    tint = MaterialTheme.colorScheme.primary
-                )
+                IconButton(
+                    onClick = {
+                        startActivity(Intent(this@AppActivity, ProfileActivity::class.java))
+                    },
+                    modifier = Modifier.size(56.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "User Profile",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        startActivity(Intent(this@AppActivity, SettingsActivity::class.java))
+                    },
+                    modifier = Modifier.size(56.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Server Settings",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
 
             // Main SOS button remains centered
@@ -160,4 +176,5 @@ class AppActivity : ComponentActivity() {
             }
         }
     }
+
 }
