@@ -43,7 +43,8 @@ class SettingsActivity : ComponentActivity() {
 
     @Composable
     fun SettingsScreen() {
-        var ipAddress by remember { mutableStateOf("") }
+        val sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        var ipAddress by remember { mutableStateOf(sharedPreferences.getString("server_ip", "") ?: "") }
         val context = LocalContext.current // Get the context
 
         Column(
