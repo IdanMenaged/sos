@@ -142,7 +142,7 @@ class SignupActivity : ComponentActivity() {
                     onClick = {
                         isLoading = true
                         CoroutineScope(Dispatchers.IO).launch {
-                            val serverCommunicator = ServerCommunicator()
+                            val serverCommunicator = ServerCommunicator(this@SignupActivity)
                             val serverCommand = "signup $username $password"
                             val response =
                                 serverCommunicator.sendNRecv(serverCommand) // Send data from both fields

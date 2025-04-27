@@ -21,7 +21,7 @@ import androidx.core.app.NotificationManagerCompat
  * sending messages. Responsible for receiving the SOS messages of others.
  */
 
-class Listener(private val context: Context) : ServerCommunicator() {
+class Listener(private val context: Context) : ServerCommunicator(context) {
 
     private val channelId = "listener_notifications"
     private val notificationId = 1

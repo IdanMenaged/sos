@@ -191,7 +191,7 @@ class ProfileActivity : ComponentActivity() {
             username = lines.first()
         }
 
-        val comm = ServerCommunicator()
+        val comm = ServerCommunicator(this)
         comm.sendNRecv("update_connections $username $formattedConnections")
         comm.closeConnection()
     }
@@ -203,7 +203,7 @@ class ProfileActivity : ComponentActivity() {
                 username = lines.first()
             }
 
-            val comm = ServerCommunicator()
+            val comm = ServerCommunicator(this@ProfileActivity)
             val connections = comm.sendNRecv("get_connections $username")
             comm.closeConnection()
 

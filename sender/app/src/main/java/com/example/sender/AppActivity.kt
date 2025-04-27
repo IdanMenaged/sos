@@ -78,7 +78,7 @@ class AppActivity : ComponentActivity() {
             val location = geo.getLocation()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val serverCommunicator = ServerCommunicator()
+                val serverCommunicator = ServerCommunicator(this@AppActivity)
                 var username = ""
                 openFileInput("user").bufferedReader().useLines { lines ->
                     username = lines.first()

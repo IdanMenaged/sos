@@ -141,7 +141,7 @@ class LoginActivity : ComponentActivity() {
                     onClick = {
                         isLoading = true
                         CoroutineScope(Dispatchers.IO).launch {
-                            val serverCommunicator = ServerCommunicator()
+                            val serverCommunicator = ServerCommunicator(this@LoginActivity)
                             val serverCommand = "login $username $password"
                             val response =
                                 serverCommunicator.sendNRecv(serverCommand) // Send data from both fields
