@@ -85,7 +85,7 @@ class LoginActivity : ComponentActivity() {
                 IconButton(
                     onClick = {
                         val intent = Intent(this@LoginActivity, SettingsActivity::class.java)
-                        intent.putExtra("previous_activity", this::class.java.name)
+                        intent.putExtra("previous_activity", this@LoginActivity::class.java.name)
                         startActivity(intent)
                     }
                 ) {

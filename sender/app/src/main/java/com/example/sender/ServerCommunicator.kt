@@ -25,6 +25,7 @@ open class ServerCommunicator(context: Context) {
 
     init {
         serverIp = getServerIpFromPreferences(context)
+        Log.d("ServerCommunicator", "new server communicator talking to $serverIp")
         socket = initSocket()
         key = socket?.let { Cipher.sendRecvKey(it) }!!
         Log.d("ServerCommunicator", "key: ${String(key)}")
@@ -117,7 +118,7 @@ open class ServerCommunicator(context: Context) {
     }
 
     private fun getServerIpFromPreferences(context: Context): String {
-        val sharedPref = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        return sharedPref.getString("server_ip", "10.0.2.2")!! // default to 10.0.2.2 if not set
+        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        return sharedPref.getString("server_ip", "")!!
     }
 }
