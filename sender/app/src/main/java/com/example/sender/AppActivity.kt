@@ -152,19 +152,6 @@ class AppActivity : ComponentActivity() {
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
-
-                IconButton(
-                    onClick = {
-                        startActivity(Intent(this@AppActivity, SettingsActivity::class.java))
-                    },
-                    modifier = Modifier.size(56.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Server Settings",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
             }
 
             // Main SOS button remains centered

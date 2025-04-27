@@ -2,7 +2,6 @@ package com.example.sender
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,6 +34,14 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 
 
 class LoginActivity : ComponentActivity() {
@@ -61,24 +68,45 @@ class LoginActivity : ComponentActivity() {
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var isLoading by remember { mutableStateOf(false) }
+        val context = LocalContext.current
 
         Column(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
         ) {
+            // Top Row with Settings button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(
+                    onClick = {
+                        context.startActivity(Intent(context, SettingsActivity::class.java))
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = Color.White
+                    )
+                }
+            }
+
             // Big title at the top
             Text(
                 text = "Login",
-                style = androidx.compose.ui.text.TextStyle(
+                style = TextStyle(
                     fontSize = 32.sp, // Set the font size to make it big
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 24.dp), // Add space below the title
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                textAlign = TextAlign.Center
             )
 
             // First TextField
@@ -142,8 +170,8 @@ class LoginActivity : ComponentActivity() {
                 // Link/Button to Navigate
                 Button(
                     onClick = {
-                        val intent = Intent(this@LoginActivity, SignupActivity::class.java)
-                        startActivity(intent)
+                        val intent = Intent(context, SignupActivity::class.java)
+                        context.startActivity(intent)
                     },
                 ) {
                     Text("Don't have an account?")
@@ -151,6 +179,7 @@ class LoginActivity : ComponentActivity() {
             }
         }
     }
+
 
     /**
      * handle response from server after a login attempt
