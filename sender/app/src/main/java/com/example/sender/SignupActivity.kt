@@ -85,7 +85,9 @@ class SignupActivity : ComponentActivity() {
             ) {
                 IconButton(
                     onClick = {
-                        context.startActivity(Intent(context, SettingsActivity::class.java))
+                        val intent = Intent(this@SignupActivity, SettingsActivity::class.java)
+                        intent.putExtra("previous_activity", this::class.java.name)
+                        startActivity(intent)
                     }
                 ) {
                     Icon(

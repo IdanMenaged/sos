@@ -2,6 +2,7 @@ package com.example.sender
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -55,7 +56,11 @@ class SettingsActivity : ComponentActivity() {
             // Go back button
             IconButton(
                 onClick = {
-                    (context as? Activity)?.finish()
+                    val previousActivityName = intent.getStringExtra("previous_activity")
+                    val previousActivityClass = Class.forName(previousActivityName!!)
+                    val restartIntent = Intent(this@SettingsActivity, previousActivityClass)
+                    startActivity(restartIntent)
+                    finish()
                 },
                 modifier = Modifier
                     .padding(top = 16.dp)
